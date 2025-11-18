@@ -1,4 +1,6 @@
-# RFC for game sicbo (Internal BinarixTech)
+# RFC for game sicbo
+
+Internal BinarixTech
 
 Protocol Specification
 
@@ -138,5 +140,7 @@ Thứ tự sự kiện:
 6. Server > Client: settlement(R1, B1, WIN, payout=2000)
 7. Server > Client: round_state(SETTLED, R1)
 
-### Sequence diagramß
-https://app.diagrams.net/?splash=0#G1JsXq79ASlwgpmdNxA9Rm8BdfH-n36azN#%7B%22pageId%22%3A%22G1JlG__NbhJptndctZcm%22%7D
+### Sequence diagram
+
+https://drive.google.com/file/d/1JsXq79ASlwgpmdNxA9Rm8BdfH-n36azN/view?usp=sharing
+
