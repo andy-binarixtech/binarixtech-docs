@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sicbo Client Test</title>
+</head>
+<body>
+  <h2>Sicbo WebSocket Client</h2>
+  <button onclick="connect()">Kết nối</button>
+  <button onclick="placeBet('TAI', 1000)">Đặt Tài 1000</button>
+  <button onclick="placeBet('XIU', 2000)">Đặt Xỉu 2000</button>
+  <pre id="log"></pre>
+
+  <script>
+    let socket;
+
+    function log(msg) {
+      document.getElementById("log").textContent += msg + "\n";
+    }
+
+    function connect() {
+      // đổi port nếu server bạn chạy khác
+      socket = new WebSocket("ws://localhost:8889");
+
+      socket.onopen = () => {
+        log("✅ Connected to server");
+        // đăng ký nhận vòng chơi
+        socket.send(JSON.stringify({ action: "subscribe_rounds" }));
+      };
+
+      socket.onmessage = (event) => {
+        log("📩 Received: " + event.data);
+      };
+
+      socket.onclose = () => {
+        log("❌ Connection closed");
+      };
+
+      socket.onerror = (err) => {
+        log("⚠️ Error: " + err);
+      };
+    }
+
+    function placeBet(side, amount) {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        log("⚠️ Socket chưa kết nối");
+        return;
+      }
+      const msg = {
+        action: "place_bet",
+        payload: {
+          roundId: "R1", // hoặc roundId server broadcast
+          side: side,
+          amount: amount
+        }
+      };
+      socket.send(JSON.stringify(msg));
+      log("➡️ Sent bet: " + JSON.stringify(msg));
+    }
+  </script>
+</body>
+</html>
