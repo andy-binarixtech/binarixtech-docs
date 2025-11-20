@@ -60,6 +60,8 @@ Java version 1.8
 
 ### Create extension.xml
 
+đặt cùng thư mục với file pom của project
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <mario>
