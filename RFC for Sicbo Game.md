@@ -170,7 +170,7 @@ error: Server trả về khi hành động thất bại.
 
 https://drive.google.com/file/d/1JsXq79ASlwgpmdNxA9Rm8BdfH-n36azN/view?usp=sharing
 
-### Enironment
+### Environment
 
 - DEV
     - `IP` : 192.168.1.14
