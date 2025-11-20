@@ -50,14 +50,6 @@ STEP 3
 
 Mở pom.xml của mario3 chỉnh lại cho đúng version
 
-### Run mario3
-
-Trong Intellij, chọn Run / Debug Configurations > Edit Configurations... > Application > Add New Configuration > Application
-- Name : run mario3
-- Build and run : java 8; mario3
-- Main Class: com.mario.Mario
-
-
 ## Create extension
 
 ### Create project
@@ -271,3 +263,10 @@ public class GameServerSicbo extends BaseMessageHandler {
 mvn clean deploy
 
 copy target/game-server-sicbo > Mario/extensions
+
+### Run mario3
+
+Trong Intellij, chọn Run / Debug Configurations > Edit Configurations... > Application > Add New Configuration > Application
+- Name : run mario3
+- Build and run : java 8; mario3
+- Main Class: com.mario.Mario
