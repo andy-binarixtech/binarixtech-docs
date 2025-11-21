@@ -67,6 +67,14 @@ ping: Kiểm tra kết nối.
 }
 ```
 
+get_user_info: lấy thông tin user (thông tin này là thông tin tạm chưa chuẩn).
+```json
+{
+    "action": "get_user_info", 
+    "requestId": "123456"
+}
+```
+
 ### Events (Server > Client)
 
 round_state: Thông báo trạng thái ván.
@@ -75,12 +83,15 @@ round_state: Thông báo trạng thái ván.
     "action": "round_state",
     "payload": {
         "roundId": "R1", 
-        "status": "OPEN", 
+        "status": "BETTING_OPEN", 
         "openAt": 1731880500, 
         "closeAt": 1731880515
     }
 }
 ```
+
+- openAt : BETTING_OPEN time
+- closeAt : BETTING_CLOSE time
 
 bet_accepted: Xác nhận cược.
 ```json
