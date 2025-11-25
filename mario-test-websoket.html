@@ -7,8 +7,9 @@
 <body>
   <h2>Sicbo WebSocket Client</h2>
   <button onclick="connect()">Kết nối</button>
-  <button onclick="get_user_info()">get user info</button>
-  <button onclick="get_table_info()">get table info</button>
+  <button onclick="login()">Login</button>
+  <button onclick="joinRoom()">Join Room</button>
+  <button onclick="ping()">PING</button>
   <button onclick="placeBet('TAI', 1000)">Đặt Tài 1000</button>
   <button onclick="placeBet('XIU', 2000)">Đặt Xỉu 2000</button>
   <pre id="log"></pre>
@@ -23,7 +24,7 @@
 
     function connect() {
       // đổi port nếu server bạn chạy khác
-      socket = new WebSocket("ws://localhost:8889");
+      socket = new WebSocket("ws://localhost:8892/websocket");
 
       socket.onopen = () => {
         log("✅ Connected to server");
@@ -49,6 +50,7 @@
         log("⚠️ Socket chưa kết nối");
         return;
       }
+
       const msg = {
         action: "place_bet",
         payload: {
@@ -56,6 +58,56 @@
           side: side,
           amount: amount
         }
+      };
+
+      socket.send(JSON.stringify(msg));
+      log("➡️ Sent bet: " + JSON.stringify(msg));
+    }
+
+    function login() {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        log("⚠️ Socket chưa kết nối");
+        return;
+      }
+      const loginMessage = [
+        1,
+        "SicboZone",
+        "user_test", 
+        "pw_123", 
+        {}
+      ]
+
+      const msg = loginMessage;
+      socket.send(JSON.stringify(msg));
+      log("➡️ Sent bet: " + JSON.stringify(msg));
+    }
+
+    function joinRoom() {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        log("⚠️ Socket chưa kết nối");
+        return;
+      }
+      const joinRoomMessage = [
+        3, 
+        "SicboZone", 
+        123456, 
+        "pwd_123456"
+      ]
+
+
+      const msg = joinRoomMessage;
+      socket.send(JSON.stringify(msg));
+      log("➡️ Sent: " + JSON.stringify(msg));
+    }
+
+    function ping() {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        log("⚠️ Socket chưa kết nối");
+        return;
+      }
+      const msg = {
+        action: "ping",
+        requestId: 123456
       };
       socket.send(JSON.stringify(msg));
       log("➡️ Sent bet: " + JSON.stringify(msg));
@@ -72,21 +124,6 @@
       };
       socket.send(JSON.stringify(msg));
       log("➡️ Sent bet: " + JSON.stringify(msg));
-    }
-
-    function get_table_info() {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("⚠️ Socket chưa kết nối");
-        return;
-      }
-      const msg = {
-        action: "get_table_info",
-        payload: {
-          
-        }
-      };
-      socket.send(JSON.stringify(msg));
-      log("➡️ table info: " + JSON.stringify(msg));
     }
   </script>
 </body>

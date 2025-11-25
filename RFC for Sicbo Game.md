@@ -75,18 +75,80 @@ get_user_info: lấy thông tin user (thông tin này là thông tin tạm chưa
 }
 ```
 
-### Events (Server > Client)
-
-round_state: Thông báo trạng thái ván.
+get_table_info: lấy thông tin bàn
+request
 ```json
 {
-    "action": "round_state",
-    "payload": {
-        "roundId": "R1", 
-        "status": "BETTING_OPEN", 
-        "openAt": 1731880500, 
-        "closeAt": 1731880515
-    }
+  "action": "get_table_info",
+  "payload": {
+  }
+}
+```
+response
+```json
+{
+  "action": "get_table_info",
+  "payload": {},
+  "datas": {
+    "tableInfo": {
+      "roundId": "R11",
+      "status": "BETTING_CLOSE",
+      "openAt": 1764058669429,
+      "closeAt": 1764058684429,
+      "totalBet": 0,
+      "totalBetTai": 0,
+      "totalBetXiu": 0,
+      "betPlayer": 0,
+      "betPlayerTai": 0,
+      "betPlayerXiu": 0
+    },
+    "tableResults": [
+      {
+        "roundId": "R9",
+        "status": "FINISH",
+        "openAt": 1764058623385,
+        "closeAt": 1764058638385,
+        "totalBet": 1000,
+        "totalBetTai": 1000,
+        "totalBetXiu": 0,
+        "betPlayer": 1,
+        "betPlayerTai": 1,
+        "betPlayerXiu": 0,
+        "tableResult": {
+          "roundId": "R9",
+          "dice": [
+            1,
+            6,
+            2
+          ],
+          "sum": 9,
+          "result": "XIU"
+        }
+      },
+      {
+        "roundId": "R10",
+        "status": "FINISH",
+        "openAt": 1764058646404,
+        "closeAt": 1764058661404,
+        "totalBet": 1000,
+        "totalBetTai": 1000,
+        "totalBetXiu": 0,
+        "betPlayer": 1,
+        "betPlayerTai": 1,
+        "betPlayerXiu": 0,
+        "tableResult": {
+          "roundId": "R10",
+          "dice": [
+            1,
+            1,
+            1
+          ],
+          "sum": 3,
+          "result": "XIU"
+        }
+      }
+    ]
+  }
 }
 ```
 
@@ -94,6 +156,7 @@ round_state: Thông báo trạng thái ván.
 - closeAt : BETTING_CLOSE time
 
 bet_accepted: Xác nhận cược.
+request
 ```json
 {
     "action": "bet_accepted",
@@ -105,6 +168,10 @@ bet_accepted: Xác nhận cược.
     }
 }
 ```
+response
+```json
+
+```
 
 reveal_result: Công bố kết quả tung xúc xắc.
 ```json
@@ -115,7 +182,7 @@ reveal_result: Công bố kết quả tung xúc xắc.
     "dice": [3,5,6], 
     "sum": 14, 
     "result": "TAI"
-    ]}
+  }
 }
 ```
 
