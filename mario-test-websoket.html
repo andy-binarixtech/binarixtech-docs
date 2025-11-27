@@ -3,6 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>Sicbo Client Test</title>
+
+  <style>
+    #log {
+      font-family: monospace;
+      border: 1px solid #ccc;
+      padding: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
+    .log-entry {
+      display: flex;
+      border-bottom: 1px solid #eee;
+      padding: 4px 0;
+      align-items: center;
+    }
+    .log-time {
+      width: 200px;
+      color: #888;
+      font-weight: bold;
+    }
+    .log-msg {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .log-msg.sent {
+      color: green;
+    }
+    .log-msg.received {
+      color: blue;
+    }
+    .log-msg.error {
+      color: red;
+    }
+    .log-icon {
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
   <h2>Sicbo WebSocket Client</h2>
@@ -10,16 +50,62 @@
   <button onclick="login()">Login</button>
   <button onclick="joinRoom()">Join Room</button>
   <button onclick="ping()">PING</button>
+  <button onclick="get_rooms()">get rooms</button>
+  <button onclick="get_user_info()">get user info</button>
+  <button onclick="get_table_info()">get table info</button>
   <button onclick="placeBet('TAI', 1000)">Đặt Tài 1000</button>
   <button onclick="placeBet('XIU', 2000)">Đặt Xỉu 2000</button>
+
+  <div id="controls">
+    <button id="clearBtn">🧹 Clear Log</button>
+  </div>
+
   <pre id="log"></pre>
 
   <script>
     let socket;
 
-    function log(msg) {
+    function logNative(msg) {
       const timestamp = new Date().toISOString();
       document.getElementById("log").textContent += timestamp + " : " + msg + "\n";
+    }
+
+    function log(msg, type="default") {
+      const timestamp = new Date().toLocaleString();
+      const logContainer = document.getElementById("log");
+
+      const entry = document.createElement("div");
+      entry.className = "log-entry";
+
+      const timeCol = document.createElement("div");
+      timeCol.className = "log-time";
+      timeCol.textContent = timestamp;
+
+      const msgCol = document.createElement("div");
+      msgCol.className = "log-msg " + type;
+
+      const icon = document.createElement("span");
+      icon.className = "log-icon";
+
+      // chọn icon theo loại log
+      switch(type) {
+        case "sent": icon.textContent = "📤"; break;
+        case "received": icon.textContent = "📥"; break;
+        case "error": icon.textContent = "⚠️"; break;
+        default: icon.textContent = "ℹ️";
+      }
+
+      const text = document.createElement("span");
+      text.textContent = msg;
+
+      msgCol.appendChild(icon);
+      msgCol.appendChild(text);
+
+      entry.appendChild(timeCol);
+      entry.appendChild(msgCol);
+      logContainer.appendChild(entry);
+
+      logContainer.scrollTop = logContainer.scrollHeight;
     }
 
     function connect() {
@@ -27,46 +113,25 @@
       socket = new WebSocket("ws://localhost:8892/websocket");
 
       socket.onopen = () => {
-        log("✅ Connected to server");
-        // đăng ký nhận vòng chơi
+        log("Connected to server");
         socket.send(JSON.stringify({ action: "subscribe_rounds" }));
       };
 
       socket.onmessage = (event) => {
-        log("📩 Received: " + event.data);
+        log("> Received: " + event.data);
       };
 
       socket.onclose = () => {
-        log("❌ Connection closed");
+        log("Connection closed");
       };
 
       socket.onerror = (err) => {
-        log("⚠️ Error: " + err);
+        log("Error: " + err, "error");
       };
-    }
-
-    function placeBet(side, amount) {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("⚠️ Socket chưa kết nối");
-        return;
-      }
-
-      const msg = {
-        action: "place_bet",
-        payload: {
-          roundId: "R1", // hoặc roundId server broadcast
-          side: side,
-          amount: amount
-        }
-      };
-
-      socket.send(JSON.stringify(msg));
-      log("➡️ Sent bet: " + JSON.stringify(msg));
     }
 
     function login() {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("⚠️ Socket chưa kết nối");
+      if (!isSocketConnected()) {
         return;
       }
       const loginMessage = [
@@ -79,7 +144,33 @@
 
       const msg = loginMessage;
       socket.send(JSON.stringify(msg));
-      log("➡️ Sent bet: " + JSON.stringify(msg));
+      log("Login message: " + JSON.stringify(msg));
+    }
+
+    function placeBet(side, amount) {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        log("Socket chưa kết nối", "error");
+        return;
+      }
+
+      const place_bet_msg = {
+        action: "place_bet",
+        payload: {
+          roundId: "R1",
+          side: side,
+          amount: amount
+        }
+      };
+      const zonePluginMessage = [
+        6,
+        "SicboZone",
+        "sicboPlugin",
+      ];
+      zonePluginMessage.push(place_bet_msg);
+
+      const msg = zonePluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
     }
 
     function joinRoom() {
@@ -93,8 +184,6 @@
         123456, 
         "pwd_123456"
       ]
-
-
       const msg = joinRoomMessage;
       socket.send(JSON.stringify(msg));
       log("➡️ Sent: " + JSON.stringify(msg));
@@ -113,18 +202,69 @@
       log("➡️ Sent bet: " + JSON.stringify(msg));
     }
 
-    function get_user_info() {
+    function get_rooms() {
       if (!socket || socket.readyState !== WebSocket.OPEN) {
         log("⚠️ Socket chưa kết nối");
         return;
       }
-      const msg = {
-        action: "get_user_info",
-        requestId: 123456
-      };
+      const msg = [
+        6,
+        "SicboZone",
+        "sicboPlugin",
+        {
+          "name": "baymet",
+          "command": "hello"
+        }
+      ];
       socket.send(JSON.stringify(msg));
-      log("➡️ Sent bet: " + JSON.stringify(msg));
+      log("➡️ : " + JSON.stringify(msg));
     }
+
+    function get_user_info() {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        log("Socket chưa kết nối", "error");
+        return;
+      }
+      const msg = [
+        6,
+        "SicboZone",
+        "sicboPlugin",
+        {
+          "action": "get_user_info"
+        }
+      ];
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
+    }
+
+    function get_table_info() {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        log("Socket chưa kết nối", "error");
+        return;
+      }
+      const msg = [
+        6,
+        "SicboZone",
+        "sicboPlugin",
+        {
+          "action": "get_table_info"
+        }
+      ];
+      socket.send(JSON.stringify(msg));
+      log("➡️ : " + JSON.stringify(msg));
+    }
+
+    function isSocketConnected() {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        log("Socket chưa kết nối", "error");
+        return false;
+      }
+      return true;
+    }
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      document.getElementById("log").innerHTML = "";
+    });
   </script>
 </body>
 </html>
