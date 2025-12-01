@@ -46,17 +46,19 @@
 </head>
 <body>
   <h2>Sicbo WebSocket Client</h2>
-  <button onclick="connect()">Kết nối</button>
-  <button onclick="login()">Login</button>
-  <button onclick="joinRoom()">Join Room</button>
-  <button onclick="ping()">PING</button>
-  <button onclick="get_rooms()">get rooms</button>
-  <button onclick="get_user_info()">get user info</button>
-  <button onclick="get_table_info()">get table info</button>
-  <button onclick="placeBet('TAI', 1000)">Đặt Tài 1000</button>
-  <button onclick="placeBet('XIU', 2000)">Đặt Xỉu 2000</button>
+  <div style="padding: 10px;">
+    <button onclick="connect()">Kết nối</button>
+    <button onclick="login()">Login</button>
+    <button onclick="joinRoom()">Join Room</button>
+    <button onclick="ping()">PING</button>
+    <button onclick="get_rooms()">get rooms</button>
+    <button onclick="get_user_info()">get user info</button>
+    <button onclick="get_table_info()">get table info</button>
+    <button onclick="placeBet('TAI', 1000)">Đặt Tài 1000</button>
+    <button onclick="placeBet('XIU', 2000)">Đặt Xỉu 2000</button>
+  </div>
 
-  <div id="controls">
+  <div id="controls" style="padding: 10px;">
     <button id="clearBtn">🧹 Clear Log</button>
   </div>
 
@@ -64,6 +66,8 @@
 
   <script>
     let socket;
+    const zoneName = 'SicboZone';
+    const pluginName = 'sicboPlugin';
 
     function logNative(msg) {
       const timestamp = new Date().toISOString();
@@ -136,8 +140,8 @@
       }
       const loginMessage = [
         1,
-        "SicboZone",
-        "user_test", 
+        zoneName,
+        "user_andy", 
         "pw_123", 
         {}
       ]
@@ -148,8 +152,7 @@
     }
 
     function placeBet(side, amount) {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("Socket chưa kết nối", "error");
+      if (!isSocketConnected()) {
         return;
       }
 
@@ -163,8 +166,8 @@
       };
       const zonePluginMessage = [
         6,
-        "SicboZone",
-        "sicboPlugin",
+        zoneName,
+        pluginName,
       ];
       zonePluginMessage.push(place_bet_msg);
 
@@ -174,13 +177,12 @@
     }
 
     function joinRoom() {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("⚠️ Socket chưa kết nối");
+      if (!isSocketConnected()) {
         return;
       }
       const joinRoomMessage = [
         3, 
-        "SicboZone", 
+        zoneName, 
         123456, 
         "pwd_123456"
       ]
@@ -190,8 +192,7 @@
     }
 
     function ping() {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("⚠️ Socket chưa kết nối");
+      if (!isSocketConnected()) {
         return;
       }
       const msg = {
@@ -203,14 +204,13 @@
     }
 
     function get_rooms() {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("⚠️ Socket chưa kết nối");
+      if (!isSocketConnected()) {
         return;
       }
       const msg = [
         6,
-        "SicboZone",
-        "sicboPlugin",
+        zoneName,
+        pluginName,
         {
           "name": "baymet",
           "command": "hello"
@@ -221,14 +221,13 @@
     }
 
     function get_user_info() {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("Socket chưa kết nối", "error");
+      if (!isSocketConnected()) {
         return;
       }
       const msg = [
         6,
-        "SicboZone",
-        "sicboPlugin",
+        zoneName,
+        pluginName,
         {
           "action": "get_user_info"
         }
@@ -238,14 +237,13 @@
     }
 
     function get_table_info() {
-      if (!socket || socket.readyState !== WebSocket.OPEN) {
-        log("Socket chưa kết nối", "error");
+      if (!isSocketConnected()) {
         return;
       }
       const msg = [
         6,
-        "SicboZone",
-        "sicboPlugin",
+        zoneName,
+        pluginName,
         {
           "action": "get_table_info"
         }

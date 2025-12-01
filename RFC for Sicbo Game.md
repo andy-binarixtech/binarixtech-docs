@@ -12,7 +12,7 @@ Mục đích: định nghĩa cấu trúc message, vòng đời trò chơi, hành
 
 Thuật ngữ:
 - `Round` (Ván chơi): Một phiên tung xúc xắc.
-- `Side` (Cửa cược): TAI hoặc XIU.
+- `Side` (Cửa cược): BIG hoặc SMALL.
 - `Dice` (Xúc xắc): 3 số nguyên từ 1–6.
 - `Payout` (Trả thưởng): Tỉ lệ 1:1.
 
@@ -32,7 +32,7 @@ Example
   "requestId": "req-123",
   "payload": {
     "roundId": "R1", 
-    "side": "TAI", 
+    "side": "BIG", 
     "amount": 1000
   }
 }
@@ -58,7 +58,7 @@ place_bet: Đặt cược.
 ```json
 {
     "action": "place_bet",
-    "payload": { "roundId": "R1", "side": "XIU", "amount": 5000 }
+    "payload": { "roundId": "R1", "side": "SMALL", "amount": 5000 }
 }
 ```
 
@@ -99,11 +99,11 @@ response
       "openAt": 1764058669429,
       "closeAt": 1764058684429,
       "totalBet": 0,
-      "totalBetTai": 0,
-      "totalBetXiu": 0,
+      "totalBetBig": 0,
+      "totalBetSmall": 0,
       "betPlayer": 0,
-      "betPlayerTai": 0,
-      "betPlayerXiu": 0
+      "betPlayerBig": 0,
+      "betPlayerSmall": 0
     },
     "tableResults": [
       {
@@ -112,11 +112,11 @@ response
         "openAt": 1764058623385,
         "closeAt": 1764058638385,
         "totalBet": 1000,
-        "totalBetTai": 1000,
-        "totalBetXiu": 0,
+        "totalBetBig": 1000,
+        "totalBetSmall": 0,
         "betPlayer": 1,
-        "betPlayerTai": 1,
-        "betPlayerXiu": 0,
+        "betPlayerBig": 1,
+        "betPlayerSmall": 0,
         "tableResult": {
           "roundId": "R9",
           "dice": [
@@ -125,7 +125,7 @@ response
             2
           ],
           "sum": 9,
-          "result": "XIU"
+          "result": "SMALL"
         }
       },
       {
@@ -134,11 +134,11 @@ response
         "openAt": 1764058646404,
         "closeAt": 1764058661404,
         "totalBet": 1000,
-        "totalBetTai": 1000,
-        "totalBetXiu": 0,
+        "totalBetBig": 1000,
+        "totalBetSmall": 0,
         "betPlayer": 1,
-        "betPlayerTai": 1,
-        "betPlayerXiu": 0,
+        "betPlayerBig": 1,
+        "betPlayerSmall": 0,
         "tableResult": {
           "roundId": "R10",
           "dice": [
@@ -147,7 +147,7 @@ response
             1
           ],
           "sum": 3,
-          "result": "XIU"
+          "result": "SMALL"
         }
       }
     ]
@@ -166,7 +166,7 @@ request
     "payload": {
         "betId": "B1",
         "roundId": "R1", 
-        "side": "TAI", 
+        "side": "BIG", 
         "amount": 1000
     }
 }
@@ -184,7 +184,7 @@ reveal_result: Công bố kết quả tung xúc xắc.
     "roundId": "R1", 
     "dice": [3,5,6], 
     "sum": 14, 
-    "result": "TAI"
+    "result": "BIG"
   }
 }
 ```
@@ -228,8 +228,8 @@ error: Server trả về khi hành động thất bại.
 ### Rule
 
 - 3 dices (1-6)
-- Sum: 11 - 17 > TAI
-- Sum: 4 - 10 > XIU
+- Sum: 11 - 17 > BIG
+- Sum: 4 - 10 > SMALL
 - Payout: abs(total_bet_tai - total_bet_xiu) * 2
 
 ### Flow
@@ -237,10 +237,10 @@ error: Server trả về khi hành động thất bại.
 1. subscribe_rounds
 2. `new_round`
 3. `round_state (BETTING_OPEN, R1)`
-4. place_bet(R1, TAI, 1000)
-5. `bet_accepted(B1, R1, TAI, 1000)`
+4. place_bet(R1, BIG, 1000)
+5. `bet_accepted(B1, R1, BIG, 1000)`
 6. `round_state(BETTING_CLOSE, R1)`
-7. `reveal_result(R1, dice=[3,5,6], sum=14, result=TAI)`
+7. `reveal_result(R1, dice=[3,5,6], sum=14, result=BIG)`
 8. `payout(R1, B1, WIN, payout=2000)`
 9. `round_state(FINISH, R1)`
 10. `game_over`
@@ -438,12 +438,12 @@ round_state: BETTING_OPEN
 
 place_bet
 ```
-[6,"SicboZone","sicboPlugin",{"action":"place_bet","payload":{"roundId":"R1","side":"TAI","amount":1000}}]
+[6,"SicboZone","sicboPlugin",{"action":"place_bet","payload":{"roundId":"R1","side":"BIG","amount":1000}}]
 ```
 
 bet_accepted
 ```
-[5,{"payload":{"side":"TAI","amount":1000,"roundId":"R1"},"action":"bet_accepted"}]
+[5,{"payload":{"side":"BIG","amount":1000,"totalBetSmall":0,"betPlayerBIG":1,"totalBetBig":1000,"roundId":"R1","betPlayerSmall":0},"action":"bet_accepted"}]
 ```
 
 round_state: BETTING_CLOSE
@@ -453,7 +453,7 @@ round_state: BETTING_CLOSE
 
 reveal_result
 ```
-[5,{"payload":{"result":"XIU","dice":[2,5,2],"sum":9,"roundId":"R46"},"action":"reveal_result"}]
+[5,{"payload":{"result":"SMALL","dice":[2,5,2],"sum":9,"roundId":"R46"},"action":"reveal_result"}]
 ```
 
 payout
@@ -483,8 +483,7 @@ Request
 ```
 Response
 ```
-> [5,{"payload":{},"datas":{"tableInfo":{"totalBetXiu":0,"betPlayerTai":0,"dice":[],"totalBet":0,"sum":0,"totalBetTai":0,"roundId":"R1","closeAt":1764211675949,"betPlayer":0,"betPlayerXiu":0,"openAt":1764211660949,"status":"BETTING_CLOSE"},"tableInfos":[]},"action":"get_table_info"}]
-
+> [5,{"payload":{},"datas":{"tableInfo":{"totalBetSmall":0,"betPlayerBig":0,"dice":[],"totalBet":0,"sum":0,"totalBetBig":0,"roundId":"R1","closeAt":1764211675949,"betPlayer":0,"betPlayerSmall":0,"openAt":1764211660949,"status":"BETTING_CLOSE"},"tableInfos":[]},"action":"get_table_info"}]
 ```
 
 ### Sequence diagram
