@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Sicbo Client Test</title>
+  <title>POKER GAME</title>
 
   <style>
     #log {
@@ -51,12 +51,7 @@
     <button onclick="login()">Login</button>
     <button onclick="joinRoom()">Join Room</button>
     <button onclick="ping()">PING</button>
-    <button onclick="get_rooms()">get rooms</button>
-    <button onclick="get_user_info()">get user info</button>
-    <button onclick="get_table_info()">get table info</button>
-    <button onclick="placeBet('BIG', 1000)">Đặt Tài 1000</button>
-    <button onclick="placeBet('SMALL', 2000)">Đặt Xỉu 2000</button>
-    <button onclick="get_current_time()">get now</button>
+    <button onclick="searchRoom()">search room</button>
   </div>
 
   <div id="controls" style="padding: 10px;">
@@ -68,7 +63,7 @@
   <script>
     let socket;
     const zoneName = 'SicboZone';
-    const pluginName = 'sicboPlugin';
+    const pluginName = 'pokerGame';
 
     function logNative(msg) {
       const timestamp = new Date().toISOString();
@@ -119,7 +114,7 @@
 
       socket.onopen = () => {
         log("Connected to server");
-        socket.send(JSON.stringify({ action: "subscribe_rounds" }));
+        socket.send(JSON.stringify({ action: "join_poker_game" }));
       };
 
       socket.onmessage = (event) => {
@@ -177,6 +172,23 @@
       log("Sent : " + JSON.stringify(msg));
     }
 
+    function searchRoom() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      const zonePluginMessage = [
+        6,
+        zoneName,
+        pluginName,
+        {
+          "action": "search_rooms"
+        }
+      ];
+      const msg = zonePluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
     function joinRoom() {
       if (!isSocketConnected()) {
         return;
@@ -189,7 +201,7 @@
       ]
       const msg = joinRoomMessage;
       socket.send(JSON.stringify(msg));
-      log("➡️ Sent: " + JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
     }
 
     function ping() {
@@ -201,65 +213,7 @@
         requestId: 123456
       };
       socket.send(JSON.stringify(msg));
-      log("➡️ Sent bet: " + JSON.stringify(msg));
-    }
-
-    function get_rooms() {
-      if (!isSocketConnected()) {
-        return;
-      }
-      const msg = [
-        6,
-        zoneName,
-        pluginName,
-        {
-          "name": "baymet",
-          "command": "hello"
-        }
-      ];
-      socket.send(JSON.stringify(msg));
-      log("➡️ : " + JSON.stringify(msg));
-    }
-
-    function get_user_info() {
-      if (!isSocketConnected()) {
-        return;
-      }
-      const msg = [
-        6,
-        zoneName,
-        pluginName,
-        {
-          "action": "get_user_info"
-        }
-      ];
-      socket.send(JSON.stringify(msg));
       log("Sent : " + JSON.stringify(msg));
-    }
-
-    function get_table_info() {
-      if (!isSocketConnected()) {
-        return;
-      }
-      const msg = [
-        6,
-        zoneName,
-        pluginName,
-        {
-          "action": "get_table_info"
-        }
-      ];
-      socket.send(JSON.stringify(msg));
-      log("Received : " + JSON.stringify(msg));
-    }
-
-    function get_current_time() {
-      const local_time = Date.now();
-      const server_time = 0;
-      log("local time : " + local_time);
-      log("server time : " + server_time);
-      const ms = 1764580594176 - 1764580597551;
-      log("minus " + ms)
     }
 
     function isSocketConnected() {

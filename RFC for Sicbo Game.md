@@ -89,70 +89,53 @@ request
 ```
 response
 ```json
-{
-  "action": "get_table_info",
-  "payload": {},
-  "datas": {
-    "tableInfo": {
-      "roundId": "R11",
-      "status": "BETTING_CLOSE",
-      "openAt": 1764058669429,
-      "closeAt": 1764058684429,
-      "totalBet": 0,
-      "totalBetBig": 0,
-      "totalBetSmall": 0,
-      "betPlayer": 0,
-      "betPlayerBig": 0,
-      "betPlayerSmall": 0
-    },
-    "tableResults": [
-      {
-        "roundId": "R9",
-        "status": "FINISH",
-        "openAt": 1764058623385,
-        "closeAt": 1764058638385,
-        "totalBet": 1000,
-        "totalBetBig": 1000,
-        "totalBetSmall": 0,
-        "betPlayer": 1,
-        "betPlayerBig": 1,
-        "betPlayerSmall": 0,
-        "tableResult": {
-          "roundId": "R9",
-          "dice": [
-            1,
-            6,
-            2
-          ],
-          "sum": 9,
-          "result": "SMALL"
-        }
-      },
-      {
-        "roundId": "R10",
-        "status": "FINISH",
-        "openAt": 1764058646404,
-        "closeAt": 1764058661404,
-        "totalBet": 1000,
-        "totalBetBig": 1000,
-        "totalBetSmall": 0,
-        "betPlayer": 1,
-        "betPlayerBig": 1,
-        "betPlayerSmall": 0,
-        "tableResult": {
-          "roundId": "R10",
-          "dice": [
-            1,
-            1,
-            1
-          ],
-          "sum": 3,
-          "result": "SMALL"
-        }
-      }
-    ]
-  }
-}
+[
+    5,
+    {
+        "payload": {},
+        "datas": {
+            "tableInfo": {
+                "totalBetBig": 0,
+                "dice": [],
+                "totalBetSmall": 0,
+                "sum": 0,
+                "closeAt": 1764640096502,
+                "betPlayer": 0,
+                "result": "",
+                "betPlayerBig": 0,
+                "totalBet": 0,
+                "roundId": "ROUND_5",
+                "openAt": 1764640066502,
+                "status": "BETTING_OPEN",
+                "elapsedTime": 25,
+                "betPlayerSmall": 0
+            },
+            "histories": [
+                {
+                    "totalBetBig": 0,
+                    "dice": [
+                        2,
+                        2,
+                        1
+                    ],
+                    "totalBetSmall": 0,
+                    "sum": 5,
+                    "closeAt": 1764639932292,
+                    "betPlayer": 0,
+                    "result": "SMALL",
+                    "betPlayerBig": 0,
+                    "totalBet": 0,
+                    "roundId": "ROUND_1",
+                    "openAt": 1764639902292,
+                    "status": "FINISH",
+                    "elapsedTime": 0,
+                    "betPlayerSmall": 0
+                }
+            ]
+        },
+        "action": "get_table_info"
+    }
+]
 ```
 
 - openAt : BETTING_OPEN time
@@ -473,7 +456,7 @@ Request
 ```
 Response
 ```
-[5,{"payload":{"balance":1000000,"tableId":7385},"action":"get_user_info"}]
+[5,{"payload":{"balance":1000000,"tableId":7385},"action":"get_user_info","chipSet":[10000,20000,30000,40000,50000,60000]}]
 ```
 
 get_table_info
