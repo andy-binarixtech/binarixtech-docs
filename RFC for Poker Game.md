@@ -562,7 +562,7 @@ Response
 > [messageId:Int 3, success:bool, errorCode:Int, roomId:int, message:String]
 ```
 
-## Flơư game poker
+## Flơw game poker
 
 | IDX | FLOW            | Action             | Descipttion                                 |
 |-----|-----------------|--------------------|---------------------------------------------|
@@ -583,7 +583,7 @@ Response
 
 ## Flow betting
 
-| STT | Hướng Gửi       | Action               | Mô Tả                                               |
+| IDX | Flow            | Action               | Descipttion                                         |
 |-----|-----------------|----------------------|-----------------------------------------------------|
 | 1   | Server → Client | `start_betting_round`| Bắt đầu vòng cược mới                               |
 | 2   | Server → Client | `player_turn`        | Thông báo lượt cược của người chơi                  |
@@ -592,7 +592,7 @@ Response
 
 ## Flow connect and join room
 
-| Bước | Hướng Gửi       | Action           | Mô Tả                          |
+| IDX  | Flow.           | Action           | Descipttion                    |
 |------|-----------------|------------------|--------------------------------|
 | 1    | Client → Server | `connect`        | Khởi tạo kết nối socket        |
 | 2    | Client → Server | `login`          | Đăng nhập / xác thực           |
