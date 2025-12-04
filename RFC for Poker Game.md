@@ -252,29 +252,31 @@ Example
 - Response
 
 ```json
-[5, {
-    "action": "room_types",
-    "requestId": "test_123_abc_456_789",
-    "payload": {
-
-    },
+[
+  5,
+  {
+    "payload": {},
+    "requestId": "test_123_abc",
     "datas": {
-        "roomTypes": [
-            {
-                "groupId": "POKER_1000",
-                "samllBlind": 5000,
-                "bigBlind": 10000,
-                "minBuyIn": 1000000
-            },
-            {
-                "groupId": "POKER_2000",
-                "samllBlind": 5000,
-                "bigBlind": 10000,
-                "minBuyIn": 1000000
-            }
-        ]
-    }
-}]
+      "roomTypes": [
+        {
+          "minBuyIn": 1000000,
+          "groupId": "POKER_1000",
+          "smallBlind": 500,
+          "bigBlind": 1000
+        },
+        {
+          "minBuyIn": 1000000,
+          "groupId": "POKER_2000",
+          "smallBlind": 1000,
+          "bigBlind": 2000
+        }
+      ]
+    },
+    "action": "get_room_types",
+    "event": "room_types"
+  }
+]
 ```
 
 </details>
@@ -636,5 +638,4 @@ Example
 | 6    | Client → Server | [create_room](#action-create_room)        | Tạo phòng mới                  |
 | 7    | Server → Client | `room_info`                               | Trả về thông tin phòng         |
 | 8    | Client → Server | [join_room](#action-join_room)            | Vào phòng đã chọn              |
-
-get_room_infos
+| 9    | Server → Client | [user_enter_room](#action-user_enter_room)            | user vào phòng              |

@@ -100,6 +100,17 @@
       timeCol.className = "log-time";
       timeCol.textContent = timestamp;
 
+      const actionCol = document.createElement("div");
+      actionCol.className = "log-action";
+
+      const btnFormat = document.createElement("button");
+      btnFormat.textContent = "Toggle JSON";
+      btnFormat.onclick = () => toogleFormatJson(btnFormat);
+
+      const btnCopy = document.createElement("button");
+      btnCopy.textContent = "Copy";
+      btnCopy.onclick = () => copyJsonData(btnCopy);
+
       const msgCol = document.createElement("div");
       msgCol.className = "log-msg " + type;
 
@@ -115,12 +126,16 @@
       }
 
       const text = document.createElement("span");
+      text.className = 'log-content';
       text.textContent = msg;
 
       msgCol.appendChild(icon);
       msgCol.appendChild(text);
+      actionCol.appendChild(btnFormat);
+      actionCol.appendChild(btnCopy);
 
       entry.appendChild(timeCol);
+      entry.appendChild(actionCol);
       entry.appendChild(msgCol);
       logContainer.appendChild(entry);
 
@@ -136,7 +151,7 @@
       };
 
       socket.onmessage = (event) => {
-        log("> Received: " + event.data);
+        log(event.data);
         const response = event.data;
         const jsonResponse = JSON.parse(event.data);
         const idResponse = jsonResponse[0];
@@ -359,6 +374,50 @@
     document.getElementById("clearBtn").addEventListener("click", () => {
       document.getElementById("log").innerHTML = "";
     });
+
+
+  function toogleFormatJson(buttonEl) {
+    const logEntry = buttonEl.closest(".log-entry");
+    if (!logEntry) return;
+
+    const contentEl = logEntry.querySelector(".log-content");
+    if (!contentEl) return;
+
+    // Lấy text
+    const text = contentEl.textContent.trim();
+
+    try {
+      const obj = JSON.parse(text);
+      // Toggle format
+      if (contentEl.dataset.formatted === "true") {
+        contentEl.textContent = JSON.stringify(obj);
+        contentEl.dataset.formatted = "false";
+      } else {
+        contentEl.textContent = JSON.stringify(obj, null, 2);
+        contentEl.dataset.formatted = "true";
+      }
+    } catch (err) {
+      console.error("Không parse được JSON:", err);
+    }
+  }
+
+  function copyJsonData(buttonEl) {
+      const logEntry = buttonEl.closest(".log-entry");
+      if (!logEntry) return;
+      const contentEl = logEntry.querySelector(".log-content");
+      if (!contentEl) return;
+
+      const text = contentEl.textContent.trim();
+
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          console.log("Đã copy JSON:", text);
+          alert("JSON đã được copy vào clipboard!");
+        })
+        .catch(err => {
+          console.error("Không copy được:", err);
+        });
+    }
 
   </script>
 </body>
