@@ -210,11 +210,11 @@ Example
 
 ---
 
-## Flow 
+#### Actions
 
 connect websocket
 
----> login
+##### Action: login
 Request
 ```json
 > [1,"SicboZone","user_test","pw_123",{}]
@@ -562,7 +562,7 @@ Response
 > [messageId:Int 3, success:bool, errorCode:Int, roomId:int, message:String]
 ```
 
-## Flơw game poker
+## Flow game poker
 
 | IDX | FLOW            | Action             | Descipttion                                 |
 |-----|-----------------|--------------------|---------------------------------------------|
@@ -595,14 +595,12 @@ Response
 | IDX  | Flow.           | Action           | Descipttion                    |
 |------|-----------------|------------------|--------------------------------|
 | 1    | Client → Server | `connect`        | Khởi tạo kết nối socket        |
-| 2    | Client → Server | `login`          | Đăng nhập / xác thực           |
+| 2    | Client → Server | [login](#action-login)          | Đăng nhập / xác thực           |
 | 3    | Client → Server | `get_room_types` | Lấy danh sách loại phòng       |
 | 4    | Server → Client | `room_types`     | Trả về danh sách loại phòng    |
 | 5    | Client → Server | `search_rooms`   | Tìm phòng theo tiêu chí        |
 | 6    | Client → Server | `create_room`    | Tạo phòng mới                  |
 | 7    | Client → Server | `join_room`      | Vào phòng đã chọn              |
 | 8    | Server → Client | `room_info`      | Trả về thông tin phòng         |
-
-
 
 
