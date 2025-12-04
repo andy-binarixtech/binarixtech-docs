@@ -215,6 +215,18 @@ Example
 connect websocket
 
 ##### Action: login
+<details>
+    <summary>more ..</summary>
+    Request
+    ```json
+    > [1,"SicboZone","user_test","pw_123",{}]
+    ```
+    Response
+    ```json
+    > [1, true, 7000, "user_test", "SicboZone", "Welcome"]
+    ```
+</details>
+
 Request
 ```json
 > [1,"SicboZone","user_test","pw_123",{}]
