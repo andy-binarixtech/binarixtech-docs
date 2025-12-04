@@ -212,30 +212,35 @@ Example
 
 #### Actions
 
-connect websocket
+##### Action: connect
 
 ##### Action: login
+
 <details>
 <summary>more ..</summary>
 
 - Request
 
 ```json
-> [1,"SicboZone","user_test","pw_123",{}]
+[1,"SicboZone","user_test","pw_123",{}]
 ```
 
 - Response 
 ```json
-> [1, true, 7000, "user_test", "SicboZone", "Welcome"]
+[1, true, 7000, "user_test", "SicboZone", "Welcome"]
 ```
+
 </details>
 
+##### Action: get_room_types
 
+<details>
+<summary>more ..</summary>
 
----> get_groups
-Request
+- Request
+
 ```json
-> [6, "SicboZone", "pokerGame", {
+[6, "SicboZone", "pokerGame", {
     "action": "get_groups",
     "requestId": "test_123_abc_456_789",
     "payload": {
@@ -243,9 +248,11 @@ Request
     }
 }]
 ```
-Response
+
+- Response
+
 ```json
-> [5, {
+[5, {
     "action": "get_groups",
     "requestId": "test_123_abc_456_789",
     "payload": {
@@ -270,18 +277,27 @@ Response
 }]
 ```
 
----> search_rooms
-Request
+</details>
+
+##### Action: search_room
+
+<details>
+<summary>more ..</summary>
+
+- Request
+
 ```json
 > [6, "SicboZone", "pokerGame", {
-    "action": "search_rooms",
+    "action": "search_room",
     "requestId": "test_123_abc_456_789",
     "payload": {
         "groupId": "POKER_2000"
     }
 }]
 ```
-Response
+
+- Response
+
 ```json
 > [5, {
     "action": "search_rooms",
@@ -298,10 +314,17 @@ Response
 }]
 ```
 
----> create_room
-Request
+</details>
+
+##### Action: create_room
+
+<details>
+<summary>more ..</summary>
+
+- Request
+
 ```json
-> [6, "SicboZone", "pokerGame", {
+[6, "SicboZone", "pokerGame", {
     "action": "create_room",
     "requestId": "test_123_abc_456_789",
     "payload": {
@@ -309,9 +332,11 @@ Request
     }
 }]
 ```
-Response
+
+- Response
+
 ```json
-> [5, {
+[5, {
     "action": "search_rooms",
     "requestId": "test_123_abc_456_789",
     "payload": {
@@ -326,15 +351,26 @@ Response
 }]
 ```
 
----> join room
-Request
+</details>
+
+##### Action: join_room
+
+<details>
+<summary>more ..</summary>
+
+- Request
+
 ```json
 [3, "SicboZone", 9129, ""]
 ```
-Response
+
+- Response
+
 ```json
 [3, true, 9000, 9129, "Welcom room"]
 ```
+
+</details>
 
 <--- start_game>
 ```json
@@ -600,15 +636,14 @@ Response
 
 ## Flow connect and join room
 
-| IDX  | Flow.           | Action           | Descipttion                    |
-|------|-----------------|------------------|--------------------------------|
-| 1    | Client → Server | `connect`        | Khởi tạo kết nối socket        |
-| 2    | Client → Server | [login](#action-login)          | Đăng nhập / xác thực           |
-| 3    | Client → Server | `get_room_types` | Lấy danh sách loại phòng       |
-| 4    | Server → Client | `room_types`     | Trả về danh sách loại phòng    |
-| 5    | Client → Server | `search_rooms`   | Tìm phòng theo tiêu chí        |
-| 6    | Client → Server | `create_room`    | Tạo phòng mới                  |
-| 7    | Client → Server | `join_room`      | Vào phòng đã chọn              |
-| 8    | Server → Client | `room_info`      | Trả về thông tin phòng         |
-
+| IDX  | Flow.           | Action                                    | Descipttion                    |
+|------|-----------------|-------------------------------------------|--------------------------------|
+| 1    | Client → Server | [connect](#action-connect)                | Khởi tạo kết nối socket        |
+| 2    | Client → Server | [login](#action-login)                    | Đăng nhập / xác thực           |
+| 3    | Client → Server | [get_room_types](#action-get_room_types)  | Lấy danh sách loại phòng       |
+| 4    | Server → Client | `room_types`                              | Trả về danh sách loại phòng    |
+| 5    | Client → Server | [search_room](#action-search_room)        | Tìm phòng theo tiêu chí        |
+| 6    | Client → Server | [create_room](#action-create_room)        | Tạo phòng mới                  |
+| 7    | Server → Client | `room_info`                               | Trả về thông tin phòng         |
+| 8    | Client → Server | [join_room](#action-join_room)            | Vào phòng đã chọn              |
 
