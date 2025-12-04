@@ -14,7 +14,7 @@
       background: #f9f9f9;
     }
     .log-entry {
-      display: flex;
+      display: block;
       border-bottom: 1px solid #eee;
       padding: 4px 0;
       align-items: center;
@@ -47,21 +47,40 @@
 <body>
   <h2>Sicbo WebSocket Client</h2>
   <div style="padding: 10px;">
-    <button onclick="connect()">Kết nối</button>
+    <button onclick="connect()">Connect</button>
     <button onclick="login()">Login</button>
-    <button onclick="joinRoom()">Join Room</button>
+    <button onclick="get_room_types()">get room types</button>
+    <button onclick="search_room()">search room</button>
+    <button onclick="create_room()">create room</button>
+    <button onclick="join_room(G_ROOM_ID)">Join Room</button>
     <button onclick="ping()">PING</button>
-    <button onclick="searchRoom()">search room</button>
   </div>
 
   <div id="controls" style="padding: 10px;">
     <button id="clearBtn">🧹 Clear Log</button>
   </div>
 
+
+  <div>
+    <span>User Id: </span>
+    <span id='userId'></span>
+  </div>
+  <div>
+    <span>Group Id: </span>
+    <span id='groupId'></span>
+    <div id="group-id-button-container"></div>
+  </div>
+  <div>
+    <span>Room Id: </span>
+    <span id='roomId'></span>
+  </div>
   <pre id="log"></pre>
 
   <script>
     let socket;
+    let G_USER_ID
+    let G_GROUP_ID;
+    let G_ROOM_ID;
     const zoneName = 'SicboZone';
     const pluginName = 'pokerGame';
 
@@ -109,16 +128,25 @@
     }
 
     function connect() {
-      // đổi port nếu server bạn chạy khác
       socket = new WebSocket("ws://localhost:8892/websocket");
 
       socket.onopen = () => {
         log("Connected to server");
-        socket.send(JSON.stringify({ action: "join_poker_game" }));
+        socket.send(JSON.stringify({ action: "join_to_poker_game" }));
       };
 
       socket.onmessage = (event) => {
         log("> Received: " + event.data);
+        const response = event.data;
+        const jsonResponse = JSON.parse(event.data);
+        const idResponse = jsonResponse[0];
+        if (idResponse === 1) {
+          process_response_1(jsonResponse);
+        } else if (idResponse === 3) {
+          process_response_3(jsonResponse);
+        } else if (idResponse === 5) {
+          process_response_5(jsonResponse);
+        }
       };
 
       socket.onclose = () => {
@@ -130,14 +158,58 @@
       };
     }
 
+    function process_response_5(jsonResponse) {
+      const dataResponse = jsonResponse[1];
+      const action = dataResponse?.action;
+      const eventServer = dataResponse.event;
+      if ( (action === 'search_room' && eventServer === 'room_info') 
+          || (action === 'create_room' && eventServer === 'room_info') ) {
+        const datas = dataResponse?.datas;
+        const roomInfo = datas?.roomInfo;
+        const roomId = roomInfo?.roomId;
+        log("> room id: " + roomId);
+        if (roomId) {
+          join_room(roomId);
+        }
+      }
+      if (action === 'get_room_types' && eventServer === 'room_types') {
+        const datas = dataResponse?.datas;
+        const roomTypes = datas?.roomTypes;
+        if (roomTypes) {
+          createButtonsFromJson(roomTypes);
+        }
+      }
+    }
+
+    function process_response_1(jsonResponse) {
+      const success = jsonResponse[1];
+      const userId = jsonResponse[3];
+      if (success) {
+        G_USER_ID = userId;
+        showUserId();
+        log("> User login success: " + userId);
+      }
+    }
+
+    function process_response_3(jsonResponse) {
+      const success = jsonResponse[1];
+      const roomId = jsonResponse[3];
+      if (success) {
+        G_ROOM_ID = roomId;
+        showRoomId();
+        log("> join room success: " + roomId);
+      }
+    }
+
     function login() {
       if (!isSocketConnected()) {
         return;
       }
+      const userId = createUserId();
       const loginMessage = [
         1,
         zoneName,
-        "user_andy", 
+        userId, 
         "pw_123", 
         {}
       ]
@@ -147,32 +219,7 @@
       log("Login message: " + JSON.stringify(msg));
     }
 
-    function placeBet(side, amount) {
-      if (!isSocketConnected()) {
-        return;
-      }
-
-      const place_bet_msg = {
-        action: "place_bet",
-        payload: {
-          roundId: "R1",
-          side: side,
-          amount: amount
-        }
-      };
-      const zonePluginMessage = [
-        6,
-        zoneName,
-        pluginName,
-      ];
-      zonePluginMessage.push(place_bet_msg);
-
-      const msg = zonePluginMessage;
-      socket.send(JSON.stringify(msg));
-      log("Sent : " + JSON.stringify(msg));
-    }
-
-    function searchRoom() {
+    function get_room_types() {
       if (!isSocketConnected()) {
         return;
       }
@@ -181,7 +228,9 @@
         zoneName,
         pluginName,
         {
-          "action": "search_rooms"
+          "action": "get_room_types",
+          "requestId": "test_123_abc",
+          "payload": {}
         }
       ];
       const msg = zonePluginMessage;
@@ -189,15 +238,67 @@
       log("Sent: " + JSON.stringify(msg));
     }
 
-    function joinRoom() {
+    function search_room() {
+      if (!G_GROUP_ID) {
+        alert('Select group id, please');
+        return;
+      }
+      if (!isSocketConnected()) {
+        return;
+      }
+      const zonePluginMessage = [
+        6,
+        zoneName,
+        pluginName,
+        {
+          "action": "search_room",
+          "payload": {
+              "groupId": G_GROUP_ID
+          }
+        }
+      ];
+      const msg = zonePluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
+    function create_room() {
+      if (!G_GROUP_ID) {
+        alert('Select group id, please');
+        return;
+      }
+      if (!isSocketConnected()) {
+        return;
+      }
+      const zonePluginMessage = [
+        6,
+        zoneName,
+        pluginName,
+        {
+          "action": "create_room",
+          "payload": {
+              "groupId": G_GROUP_ID
+          }
+        }
+      ];
+      const msg = zonePluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
+    function join_room(roomId) {
+      if (!roomId) {
+        alert('Select room, please');
+        return;
+      }
       if (!isSocketConnected()) {
         return;
       }
       const joinRoomMessage = [
         3, 
         zoneName, 
-        123456, 
-        "pwd_123456"
+        roomId, 
+        ""
       ]
       const msg = joinRoomMessage;
       socket.send(JSON.stringify(msg));
@@ -224,9 +325,41 @@
       return true;
     }
 
+    function showUserId() {
+      document.getElementById('userId').innerHTML = G_USER_ID;
+    }
+    function showRoomId() {
+      document.getElementById('roomId').innerHTML = G_ROOM_ID;
+    }
+    function showGroupId() {
+      document.getElementById('groupId').innerHTML = G_GROUP_ID;
+    }
+    function selectGroupId(groupId) {
+      G_GROUP_ID = groupId;
+      showGroupId();
+    }
+    function createButtonsFromJson(jsonArray) {
+      const container = document.getElementById('group-id-button-container');
+
+      jsonArray.forEach(item => {
+        const btn = document.createElement("button");
+        btn.textContent = item.groupId; 
+        btn.name = item.groupId;
+        btn.onclick = () => selectGroupId(item.groupId);
+        container.appendChild(btn);
+      });
+    }
+    function randomId(length = 8) {
+      return Math.random().toString(36).substr(2, length);
+    }
+    function createUserId(){
+      return "user_" + randomId(); 
+    }
+
     document.getElementById("clearBtn").addEventListener("click", () => {
       document.getElementById("log").innerHTML = "";
     });
+
   </script>
 </body>
 </html>

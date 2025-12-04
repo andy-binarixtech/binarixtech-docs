@@ -217,7 +217,7 @@ Example
 ##### Action: login
 
 <details>
-<summary>more ..</summary>
+<summary>more ...</summary>
 
 - Request
 
@@ -235,13 +235,13 @@ Example
 ##### Action: get_room_types
 
 <details>
-<summary>more ..</summary>
+<summary>more ...</summary>
 
 - Request
 
 ```json
 [6, "SicboZone", "pokerGame", {
-    "action": "get_groups",
+    "action": "get_room_types",
     "requestId": "test_123_abc_456_789",
     "payload": {
 
@@ -253,13 +253,13 @@ Example
 
 ```json
 [5, {
-    "action": "get_groups",
+    "action": "room_types",
     "requestId": "test_123_abc_456_789",
     "payload": {
 
     },
     "datas": {
-        "groups": [
+        "roomTypes": [
             {
                 "groupId": "POKER_1000",
                 "samllBlind": 5000,
@@ -282,7 +282,7 @@ Example
 ##### Action: search_room
 
 <details>
-<summary>more ..</summary>
+<summary>more ...</summary>
 
 - Request
 
@@ -319,7 +319,7 @@ Example
 ##### Action: create_room
 
 <details>
-<summary>more ..</summary>
+<summary>more ...</summary>
 
 - Request
 
@@ -356,7 +356,7 @@ Example
 ##### Action: join_room
 
 <details>
-<summary>more ..</summary>
+<summary>more ...</summary>
 
 - Request
 
@@ -596,16 +596,6 @@ Example
 ]
 ```
 
----> join_room
-Request
-```json
-> [3, zoneName:String, roomId:Integer, password:String]
-```
-Response
-```json
-> [messageId:Int 3, success:bool, errorCode:Int, roomId:int, message:String]
-```
-
 ## Flow game poker
 
 | IDX | FLOW            | Action             | Descipttion                                 |
@@ -647,3 +637,4 @@ Response
 | 7    | Server → Client | `room_info`                               | Trả về thông tin phòng         |
 | 8    | Client → Server | [join_room](#action-join_room)            | Vào phòng đã chọn              |
 
+get_room_infos
