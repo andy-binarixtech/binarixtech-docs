@@ -374,6 +374,69 @@ Example
 
 </details>
 
+##### Action: user_enter_room
+
+<details>
+<summary>more ...</summary>
+
+```json
+[
+  5,
+  {
+    "datas": {
+      "playerInfo": {
+        "chip": 1000000,
+        "balance": 1000000,
+        "avatarUrl": "no avatar",
+        "seatIndex": 2,
+        "name": "user_0lowr39d"
+      },
+      "roomId": 18678,
+      "roomInfo": {
+        "roomId": 18678,
+        "roomName": "Poker_1"
+      }
+    },
+    "action": "user_enter_room",
+    "event": "user_enter_room"
+  }
+]
+```
+
+</details>
+
+##### Action: room_data
+
+<details>
+<summary>more ...</summary>
+
+```json
+[
+  5,
+  {
+    "datas": {
+      "playerInfos": [
+        {
+          "chip": 1000000,
+          "balance": 1000000,
+          "avatarUrl": "no avatar",
+          "seatIndex": 1,
+          "name": "user_0vsbf0im"
+        }
+      ],
+      "roomInfo": {
+        "roomId": 18678,
+        "roomName": "Poker_1"
+      }
+    },
+    "action": "room_data",
+    "event": "room_data"
+  }
+]
+```
+
+</details>
+
 <--- start_game>
 ```json
 [
@@ -639,3 +702,4 @@ Example
 | 7    | Server → Client | `room_info`                               | Trả về thông tin phòng         |
 | 8    | Client → Server | [join_room](#action-join_room)            | Vào phòng đã chọn              |
 | 9    | Server → Client | [user_enter_room](#action-user_enter_room)            | user vào phòng              |
+| 10   | Server → Client | [room_data](#action-room_data)            | dach sách user trong phòng             |
