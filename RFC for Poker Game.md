@@ -437,175 +437,387 @@ Example
 
 </details>
 
-<--- start_game>
+#### start_game
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "start_game",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {},
+    "action": "start_game",
+    "event": "start_game"
+  }
 ]
 ```
 
-<--- place_blind
+</details>
+
+#### place_blind
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "place_blind",
-        "datas": {
-            
+  5,
+  {
+    "datas": {
+      "playerInfo": {
+        "chip": 1000000,
+        "role": "DEALER",
+        "balance": 1000000,
+        "avatarUrl": "https://res.cloudinary.com/dvqf9cl2u/image/upload/anh-gai-xinh-sexy-2_nnf69k.jpg",
+        "seatIndex": 0,
+        "name": "user_56rwp9c1",
+        "betInfo": {
+          "betValue": 0,
+          "playerName": "user_56rwp9c1",
+          "success": true,
+          "newBalance": 0,
+          "action": "RAISE",
+          "roomId": 2575,
+          "newTablePos": 0
         }
-    }
+      },
+      "betInfo": {
+        "betValue": 0,
+        "playerName": "user_56rwp9c1",
+        "success": true,
+        "newBalance": 0,
+        "action": "RAISE",
+        "roomId": 2575,
+        "newTablePos": 0
+      }
+    },
+    "action": "place_bind",
+    "event": "place_bind"
+  }
 ]
 ```
 
-<--- deal_card
+- role: DEALER, SMALL_BLIND< BIG_BLIND, PLAYER, NULL (VIEWER)
+
+</details>
+
+#### deal_hole_cards
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "deal_card",
-        "datas": {
-            
+  5,
+  {
+    "datas": {
+      "playerInfo": {
+        "chip": 1000000,
+        "role": "BIG_BLIND",
+        "balance": 1000000,
+        "avatarUrl": "https://res.cloudinary.com/dvqf9cl2u/image/upload/anh-gai-xinh-sexy-2_nnf69k.jpg",
+        "seatIndex": 2,
+        "name": "user_r9bi7xhm",
+        "betInfo": {
+          "betValue": 1000,
+          "playerName": "user_r9bi7xhm",
+          "success": true,
+          "newBalance": 2000,
+          "action": "RAISE",
+          "roomId": 2575,
+          "newTablePos": 0
+        },
+        "hand": [
+          {
+            "cardSpriteName": "8D",
+            "rank": "8",
+            "suit": "spade",
+            "id": 7
+          },
+          {
+            "cardSpriteName": "5C",
+            "rank": "5",
+            "suit": "club",
+            "id": 43
+          }
+        ]
+      },
+      "handCards": [
+        {
+          "cardSpriteName": "8D",
+          "rank": "8",
+          "suit": "spade",
+          "id": 7
+        },
+        {
+          "cardSpriteName": "5C",
+          "rank": "5",
+          "suit": "club",
+          "id": 43
         }
-    }
+      ],
+      "dealCard": {
+        "playerTurnId": [
+          "user_vzfyhv9h",
+          "user_r9bi7xhm",
+          "user_56rwp9c1"
+        ],
+        "cardId": [
+          7,
+          43
+        ],
+        "roomId": 2575
+      }
+    },
+    "action": "deal_hole_cards",
+    "event": "deal_hole_cards"
+  }
 ]
 ```
 
-<--- pre_flop
+</details>
+
+#### pre_flop_betting
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "pre_flop",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {},
+    "action": "pre_flop_betting",
+    "event": "pre_flop_betting"
+  }
 ]
 ```
 
-<--- flop
+</details>
+
+#### deal_flop
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "flop",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {
+      "dealTableCard": {
+        "tableCards": [
+          {
+            "cardSpriteName": "5B",
+            "rank": "5",
+            "suit": "diamond",
+            "id": 30
+          },
+          {
+            "cardSpriteName": "6A",
+            "rank": "6",
+            "suit": "heart",
+            "id": 18
+          },
+          {
+            "cardSpriteName": "7C",
+            "rank": "7",
+            "suit": "club",
+            "id": 45
+          }
+        ],
+        "cardId": [
+          30,
+          18,
+          45
+        ],
+        "roomId": 2575
+      }
+    },
+    "action": "deal_flop",
+    "event": "deal_flop"
+  }
 ]
 ```
 
-<--- flop
+</details>
+
+#### flop_betting
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "flop",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {},
+    "action": "flop_betting",
+    "event": "flop_betting"
+  }
 ]
 ```
 
-<--- flop_betting
+</details>
+
+#### deal_turn
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "flop_betting",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {
+      "dealTableCard": {
+        "tableCards": [
+          {
+            "cardSpriteName": "KD",
+            "rank": "13",
+            "suit": "spade",
+            "id": 12
+          }
+        ],
+        "cardId": [
+          12
+        ],
+        "roomId": 2575
+      }
+    },
+    "action": "deal_turn",
+    "event": "deal_turn"
+  }
 ]
 ```
 
-<--- turn
+</details>
+
+#### turn_betting
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "turn",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {},
+    "action": "turn_betting",
+    "event": "turn_betting"
+  }
 ]
 ```
 
-<--- turn_betting
+</details>
+
+#### deal_river
+
+#### deal_river
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "turn_betting",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {
+      "dealTableCard": {
+        "tableCards": [
+          {
+            "cardSpriteName": "6D",
+            "rank": "6",
+            "suit": "spade",
+            "id": 5
+          }
+        ],
+        "cardId": [
+          5
+        ],
+        "roomId": 2575
+      }
+    },
+    "action": "deal_river",
+    "event": "deal_river"
+  }
 ]
 ```
 
+</details>
 
-<--- river
+#### river_betting
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "river",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {},
+    "action": "river_betting",
+    "event": "river_betting"
+  }
 ]
 ```
 
-<--- showdown
+</details>
+
+#### showdown
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "showdown",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {},
+    "action": "showdown",
+    "event": "showdown"
+  }
 ]
 ```
 
-<--- payout
+</details>
+
+#### payout
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "payout",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {},
+    "action": "payout",
+    "event": "payout"
+  }
 ]
 ```
 
-<--- end_game>
+</details>
+
+#### end_game>
+
+<details>
+<summary>more ...</summary>
+
 ```json
 [
-    5,
-    {
-        "action": "end_game",
-        "datas": {
-            
-        }
-    }
+  5,
+  {
+    "datas": {},
+    "action": "end_game",
+    "event": "end_game"
+  }
 ]
 ```
+
+</details>
 
 ### Round betting
 <--- start_round_betting
@@ -665,19 +877,19 @@ Example
 
 | IDX | FLOW            | Action             | Descipttion                                 |
 |-----|-----------------|--------------------|---------------------------------------------|
-| 1   | Server → Client | `start_game`       | Bắt đầu ván mới, khởi tạo bàn chơi          |
-| 2   | Server → Client | `place_blind`      | Đặt small blind và big blind                |
-| 3   | Server → Client | `deal_hole_cards`  | Chia 2 lá bài riêng cho mỗi người chơi      |
-| 4   | Server → Client | `pre_flop_betting` | Bắt đầu vòng cược Pre-Flop                  |
-| 5   | Server → Client | `deal_flop`        | Lật 3 lá bài chung đầu tiên                 |
-| 6   | Server → Client | `flop_betting`     | Vòng cược sau Flop                          |
-| 7   | Server → Client | `deal_turn`        | Lật lá bài chung thứ 4                      |
-| 8   | Server → Client | `turn_betting`     | Vòng cược sau Turn                          |
-| 9   | Server → Client | `deal_river`       | Lật lá bài chung thứ 5                      |
-| 10  | Server → Client | `river_betting`    | Vòng cược sau River                         |
-| 11  | Server → Client | `showdown`         | So bài, xác định người thắng                |
-| 12  | Server → Client | `payout`           | Trao pot cho người thắng                    |
-| 13  | Server → Client | `end_game`         | Kết thúc ván, chuẩn bị ván mới              |
+| 1   | Server → Client | [start_game](#start_game)       | Bắt đầu ván mới, khởi tạo bàn chơi          |
+| 2   | Server → Client | [place_blind](#place_blind)      | Đặt small blind và big blind                |
+| 3   | Server → Client | [deal_hole_cards](#deal_hole_cards)  | Chia 2 lá bài riêng cho mỗi người chơi      |
+| 4   | Server → Client | [pre_flop_betting](#pre_flop_betting) | Bắt đầu vòng cược Pre-Flop                  |
+| 5   | Server → Client | [deal_flop](#deal_flop)        | Lật 3 lá bài chung đầu tiên                 |
+| 6   | Server → Client | [flop_betting](#flop_betting)     | Vòng cược sau Flop                          |
+| 7   | Server → Client | [deal_turn](#deal_turn)        | Lật lá bài chung thứ 4                      |
+| 8   | Server → Client | [turn_betting](#turn_betting)     | Vòng cược sau Turn                          |
+| 9   | Server → Client | [deal_river](#deal_river)       | Lật lá bài chung thứ 5                      |
+| 10  | Server → Client | [river_betting](#river_betting)    | Vòng cược sau River                         |
+| 11  | Server → Client | [showdown](#showdown)         | So bài, xác định người thắng                |
+| 12  | Server → Client | [payout](#payout)           | Trao pot cho người thắng                    |
+| 13  | Server → Client | [end_game](#end_game)         | Kết thúc ván, chuẩn bị ván mới              |
 
 
 ## Flow betting

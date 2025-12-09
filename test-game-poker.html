@@ -5,6 +5,74 @@
   <title>POKER GAME</title>
 
   <style>
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px;
+    }
+    .card-item {
+      border: 1px solid #666;
+      border-radius: 6px;
+      padding: 10px;
+      width: 120px;
+      text-align: center;
+      background: #f9f9f9;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .card-sprite {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+    .card-info {
+      font-size: 13px;
+      color: #333;
+    }
+  </style>
+
+  <style>
+    .player-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px;
+      width: 280px;
+      display: inline-block;
+      text-align: center;
+      background: #f9f9f9;
+    }
+    .player-card img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+    .player-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .player-info {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .player-hand {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .card {
+      border: 1px solid #666;
+      border-radius: 4px;
+      padding: 4px;
+      background: #fff;
+      font-size: 12px;
+    }
+  </style>
+
+  <style>
     #log {
       font-family: monospace;
       border: 1px solid #ccc;
@@ -74,6 +142,8 @@
     <span>Room Id: </span>
     <span id='roomId'></span>
   </div>
+  <div id="players-container"></div>
+  <div id="table-container"></div>
   <pre id="log"></pre>
 
   <script>
@@ -81,6 +151,8 @@
     let G_USER_ID
     let G_GROUP_ID;
     let G_ROOM_ID;
+    let G_PLAYER_INFOS = [];
+    let G_TABLE_CARDS = [];
     const zoneName = 'SicboZone';
     const pluginName = 'pokerGame';
 
@@ -192,6 +264,82 @@
         const roomTypes = datas?.roomTypes;
         if (roomTypes) {
           createButtonsFromJson(roomTypes);
+          selectGroupId('POKER_2000');
+        }
+      }
+
+      if (action === 'room_data' && eventServer === 'room_data') {
+        const datas = dataResponse?.datas;
+        const playerInfos = datas?.playerInfos;
+        G_PLAYER_INFOS = playerInfos;
+        if (G_PLAYER_INFOS) {
+          showPlayerInfos(G_PLAYER_INFOS);
+        }
+      }
+
+      if (action === 'user_enter_room' && eventServer === 'user_enter_room') {
+        const datas = dataResponse?.datas;
+        const playerInfo = datas?.playerInfo;
+        updatePlayerInfo(G_PLAYER_INFOS, playerInfo);
+        if (G_PLAYER_INFOS) {
+          showPlayerInfos(G_PLAYER_INFOS);
+        }
+      }
+
+      if (action === 'place_bind' && eventServer === 'place_bind') {
+        const datas = dataResponse?.datas;
+        const playerInfo = datas?.playerInfo;
+        updatePlayerInfo(G_PLAYER_INFOS, playerInfo);
+        if (G_PLAYER_INFOS) {
+          showPlayerInfos(G_PLAYER_INFOS);
+        }
+      }
+
+      if (action === 'deal_hole_cards' && eventServer === 'deal_hole_cards') {
+        const datas = dataResponse?.datas;
+        const playerInfo = datas?.playerInfo;
+        updatePlayerInfo(G_PLAYER_INFOS, playerInfo);
+        if (G_PLAYER_INFOS) {
+          showPlayerInfos(G_PLAYER_INFOS);
+        }
+      }
+
+      if (action === 'deal_flop' && eventServer === 'deal_flop') {
+        const datas = dataResponse?.datas;
+        const tableCards = datas?.dealTableCard?.tableCards;
+        G_TABLE_CARDS = tableCards;
+        console.log(tableCards);
+        if (G_TABLE_CARDS) {
+          showTableCards(G_TABLE_CARDS);
+        }
+      }
+
+        if (action === 'deal_turn' && eventServer === 'deal_turn') {
+        const datas = dataResponse?.datas;
+        const tableCards = datas?.dealTableCard?.tableCards;
+        G_TABLE_CARDS = G_TABLE_CARDS.concat(tableCards);
+        console.log(G_TABLE_CARDS);
+        if (G_TABLE_CARDS) {
+          showTableCards(G_TABLE_CARDS);
+        }
+      }
+
+        if (action === 'deal_river' && eventServer === 'deal_river') {
+        const datas = dataResponse?.datas;
+        const tableCards = datas?.dealTableCard?.tableCards;
+        G_TABLE_CARDS = G_TABLE_CARDS.concat(tableCards);
+        console.log(G_TABLE_CARDS);
+        if (G_TABLE_CARDS) {
+          showTableCards(G_TABLE_CARDS);
+        }
+      }
+
+      if (action === 'user_exit_room' && eventServer === 'user_exit_room') {
+        const datas = dataResponse?.datas;
+        const playerInfo = datas?.playerInfo;
+        removePlayerInfo(G_PLAYER_INFOS, playerInfo?.name);
+        if (G_PLAYER_INFOS) {
+          showPlayerInfos(G_PLAYER_INFOS);
         }
       }
     }
@@ -419,6 +567,123 @@
         });
     }
 
+    function showPlayerInfos(players) {
+      const container = document.getElementById("players-container");
+      container.innerHTML = ""; // clear old content
+
+      players.forEach(player => {
+        const card = document.createElement("div");
+        card.className = "player-card";
+
+        const avatar = document.createElement("img");
+        avatar.src = player.avatarUrl;
+        avatar.alt = player.name;
+
+        const name = document.createElement("div");
+        name.className = "player-name";
+        name.textContent = player.name;
+
+        const info = document.createElement("div");
+        info.className = "player-info";
+        info.innerHTML = `
+          Seat: ${player.seatIndex} <br>
+          Chips: ${player.chip} <br>
+          Balance: ${player.balance} <br>
+          role: ${player?.role}
+        `;
+ 
+        const handDiv = document.createElement("div");
+        handDiv.className = "player-hand";
+        if (player.hand && player.hand.length > 0) {
+          player.hand.forEach(cardInfo => {
+            const cardEl = document.createElement("div");
+            cardEl.className = "card";
+            cardEl.textContent = `${cardInfo.cardSpriteName} (${cardInfo.rank} ${cardInfo.suit})`;
+            handDiv.appendChild(cardEl);
+          });
+        }
+
+        card.appendChild(avatar);
+        card.appendChild(name);
+        card.appendChild(info);
+        container.appendChild(card);
+        card.appendChild(handDiv);
+      });
+    }
+
+  function updatePlayerInfo(players, updatedInfo) {
+    // Tìm index của player theo name
+    const index = players.findIndex(p => p.name === updatedInfo.name);
+
+    if (index !== -1) {
+      // Nếu có thì update
+      players[index] = { ...players[index], ...updatedInfo };
+    } else {
+      // Nếu không có thì thêm mới
+      players.push(updatedInfo);
+    }
+
+    return players;
+  }
+
+  // Remove player theo name
+  function removePlayerInfo(players, name) {
+    const index = players.findIndex(p => p.name === name);
+
+    if (index !== -1) {
+      players.splice(index, 1); // xoá phần tử tại index
+    }
+
+    return players;
+  }
+  </script>
+
+  <script>
+    function showTableCards(cards) {
+      const container = document.getElementById("table-container");
+      container.innerHTML = "";
+
+      const cardsDiv = document.createElement("div");
+      cardsDiv.className = "cards-container";
+
+      cards.forEach(card => {
+        const cardItem = document.createElement("div");
+        cardItem.className = "card-item";
+
+        const sprite = document.createElement("div");
+        sprite.className = "card-sprite";
+        sprite.textContent = card.cardSpriteName;
+
+        const info = document.createElement("div");
+        info.className = "card-info";
+        info.innerHTML = `
+          ID: ${card.id}<br>
+          Rank: ${card.rank}<br>
+          Suit: ${card.suit}
+        `;
+
+        cardItem.appendChild(sprite);
+        cardItem.appendChild(info);
+        cardsDiv.appendChild(cardItem);
+      });
+
+      container.appendChild(cardsDiv);
+    }
+
+    function updateTableCards(tableCards, updateCard) {
+      // Tìm index của player theo name
+      const index = tableCards.findIndex(p => p.id === updateCard.id);
+
+      if (index !== -1) {
+        // Nếu có thì update
+        tableCards[index] = { ...tableCards[index], ...updateCard };
+      } else {
+        // Nếu không có thì thêm mới
+        tableCards.push(updateCard);
+      }
+
+      return tableCards;
+    }
   </script>
 </body>
 </html>
