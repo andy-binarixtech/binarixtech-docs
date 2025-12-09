@@ -437,6 +437,57 @@ Example
 
 </details>
 
+
+##### Action: user_exit_room
+
+<details>
+<summary>more ...</summary>
+
+```json
+[
+  5,
+  {
+    "datas": {
+      "playerInfo": {
+        "chip": 1000000,
+        "role": "BIG_BLIND",
+        "balance": 1000000,
+        "avatarUrl": "https://res.cloudinary.com/dvqf9cl2u/image/upload/anh-gai-xinh-sexy-2_nnf69k.jpg",
+        "seatIndex": 2,
+        "name": "user_r9bi7xhm",
+        "betInfo": {
+          "betValue": 1000,
+          "playerName": "user_r9bi7xhm",
+          "success": true,
+          "newBalance": 2000,
+          "action": "RAISE",
+          "roomId": 2575,
+          "newTablePos": 0
+        },
+        "hand": [
+          {
+            "cardSpriteName": "8D",
+            "rank": "8",
+            "suit": "spade",
+            "id": 7
+          },
+          {
+            "cardSpriteName": "5C",
+            "rank": "5",
+            "suit": "club",
+            "id": 43
+          }
+        ]
+      }
+    },
+    "action": "user_exit_room",
+    "event": "user_exit_room"
+  }
+]
+```
+
+</details>
+
 #### start_game
 
 <details>
@@ -465,35 +516,26 @@ Example
   5,
   {
     "datas": {
-      "playerInfo": {
-        "chip": 1000000,
-        "role": "DEALER",
-        "balance": 1000000,
-        "avatarUrl": "https://res.cloudinary.com/dvqf9cl2u/image/upload/anh-gai-xinh-sexy-2_nnf69k.jpg",
-        "seatIndex": 0,
-        "name": "user_56rwp9c1",
-        "betInfo": {
-          "betValue": 0,
-          "playerName": "user_56rwp9c1",
-          "success": true,
-          "newBalance": 0,
-          "action": "RAISE",
-          "roomId": 2575,
-          "newTablePos": 0
-        }
-      },
-      "betInfo": {
-        "betValue": 0,
-        "playerName": "user_56rwp9c1",
-        "success": true,
-        "newBalance": 0,
-        "action": "RAISE",
-        "roomId": 2575,
-        "newTablePos": 0
-      }
+      "playerRoles": [
+	      {
+		      "userID": "1",
+		      "role": "DEALER",
+		      "betValue": 0
+	      },
+	      {
+		      "userID": "2",
+		      "role": "SMALL_BLIND",
+		      "betValue": 5
+	      },
+	      {
+		      "userID": "3",
+		      "role": "BIG_BLIND",
+		      "betValue": 10
+	      }
+      ]
     },
-    "action": "place_bind",
-    "event": "place_bind"
+    "action": "place_blind",
+    "event": "place_blind"
   }
 ]
 ```
@@ -915,3 +957,4 @@ Example
 | 8    | Client → Server | [join_room](#action-join_room)            | Vào phòng đã chọn              |
 | 9    | Server → Client | [user_enter_room](#action-user_enter_room)            | user vào phòng              |
 | 10   | Server → Client | [room_data](#action-room_data)            | dach sách user trong phòng             |
+| 11   | Server → Client | [user_exit_room](#action-user_exit_room)            | user rời khỏi phòng             |
