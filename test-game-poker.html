@@ -122,6 +122,7 @@
     <button onclick="create_room()">create room</button>
     <button onclick="join_room(G_ROOM_ID)">Join Room</button>
     <button onclick="ping()">PING</button>
+    <button onclick="send_msg_to_room()">send msg to room</button>
   </div>
 
   <div id="controls" style="padding: 10px;">
@@ -288,8 +289,8 @@
 
       if (action === 'place_bind' && eventServer === 'place_bind') {
         const datas = dataResponse?.datas;
-        const playerInfo = datas?.playerInfo;
-        updatePlayerInfo(G_PLAYER_INFOS, playerInfo);
+        const playerRoles = datas?.playerRoles;
+        updatePlayerRole(G_PLAYER_INFOS, playerRoles);
         if (G_PLAYER_INFOS) {
           showPlayerInfos(G_PLAYER_INFOS);
         }
@@ -306,7 +307,7 @@
 
       if (action === 'deal_flop' && eventServer === 'deal_flop') {
         const datas = dataResponse?.datas;
-        const tableCards = datas?.dealTableCard?.tableCards;
+        const tableCards = datas?.tableCards;
         G_TABLE_CARDS = tableCards;
         console.log(tableCards);
         if (G_TABLE_CARDS) {
@@ -316,7 +317,7 @@
 
         if (action === 'deal_turn' && eventServer === 'deal_turn') {
         const datas = dataResponse?.datas;
-        const tableCards = datas?.dealTableCard?.tableCards;
+        const tableCards = datas?.tableCards;
         G_TABLE_CARDS = G_TABLE_CARDS.concat(tableCards);
         console.log(G_TABLE_CARDS);
         if (G_TABLE_CARDS) {
@@ -326,7 +327,7 @@
 
         if (action === 'deal_river' && eventServer === 'deal_river') {
         const datas = dataResponse?.datas;
-        const tableCards = datas?.dealTableCard?.tableCards;
+        const tableCards = datas?.tableCards;
         G_TABLE_CARDS = G_TABLE_CARDS.concat(tableCards);
         console.log(G_TABLE_CARDS);
         if (G_TABLE_CARDS) {
@@ -480,6 +481,30 @@
       log("Sent : " + JSON.stringify(msg));
     }
 
+    function send_msg_to_room() {
+      if (!G_ROOM_ID) {
+        alert('Join room, please');
+        return;
+      }
+      if (!isSocketConnected()) {
+        return;
+      }
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "send_msg_to_room",
+          "payload": {
+
+          }
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
     function isSocketConnected() {
       if (!socket || socket.readyState !== WebSocket.OPEN) {
         log("Socket chưa kết nối", "error");
@@ -616,12 +641,19 @@
     const index = players.findIndex(p => p.name === updatedInfo.name);
 
     if (index !== -1) {
-      // Nếu có thì update
       players[index] = { ...players[index], ...updatedInfo };
     } else {
-      // Nếu không có thì thêm mới
       players.push(updatedInfo);
     }
+
+    return players;
+  }
+
+  function updatePlayerRole(players, updatedInfo) {
+    updatedInfo.forEach(info => {
+      const index = players.findIndex(p => p.name === info.userID);
+      players[index].role = info.role;
+    });
 
     return players;
   }
