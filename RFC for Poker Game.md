@@ -958,3 +958,76 @@ Example
 | 9    | Server → Client | [user_enter_room](#action-user_enter_room)            | user vào phòng              |
 | 10   | Server → Client | [room_data](#action-room_data)            | dach sách user trong phòng             |
 | 11   | Server → Client | [user_exit_room](#action-user_exit_room)            | user rời khỏi phòng             |
+
+Danh sách chi tiết
+ROYAL_FLUSH
+Bộ bài mạnh nhất: A, K, Q, J, 10 cùng chất.
+
+Không thể bị đánh bại.
+
+Ví dụ: ♠A, ♠K, ♠Q, ♠J, ♠10
+
+STRAIGHT_FLUSH
+5 lá liên tiếp cùng chất.
+
+Nếu hòa, so lá cao nhất trong dãy.
+
+Ví dụ: ♠5, ♠6, ♠7, ♠8, ♠9
+
+FOUR_OF_A_KIND
+4 lá cùng rank.
+
+Nếu hòa, so rank của bộ tứ, rồi kicker.
+
+Ví dụ: ♠K, ♦K, ♣K, ♥K, ♠7
+
+FULL_HOUSE
+3 lá cùng rank + 1 đôi.
+
+Nếu hòa, so bộ ba trước, rồi đến đôi.
+
+Ví dụ: ♠9, ♦9, ♣9, ♥4, ♠4
+
+FLUSH
+5 lá cùng chất, không liên tiếp.
+
+Nếu hòa, so lần lượt các lá cao nhất.
+
+Ví dụ: ♥A, ♥J, ♥9, ♥6, ♥3
+
+STRAIGHT
+5 lá liên tiếp khác chất.
+
+A có thể đứng đầu (A-K-Q-J-10) hoặc cuối (5-4-3-2-A).
+
+Nếu hòa, so lá cao nhất trong dãy.
+
+Ví dụ: ♠5, ♦6, ♣7, ♥8, ♠9
+
+THREE_OF_A_KIND
+3 lá cùng rank.
+
+Nếu hòa, so rank của bộ ba, rồi kicker.
+
+Ví dụ: ♠7, ♦7, ♣7, ♥K, ♠2
+
+TWO_PAIR
+2 cặp khác nhau.
+
+Nếu hòa, so cặp cao hơn, rồi cặp thấp hơn, cuối cùng kicker.
+
+Ví dụ: ♠Q, ♥Q, ♦8, ♣8, ♠5
+
+ONE_PAIR
+2 lá cùng rank.
+
+Nếu hòa, so rank của Pair, rồi kicker.
+
+Ví dụ: ♠10, ♦10, ♣7, ♥4, ♠2
+
+HIGH_CARD
+Không có tổ hợp nào đặc biệt.
+
+Bài mạnh nhất được xác định bằng lá cao nhất, sau đó kicker.
+
+Ví dụ: ♠A, ♦J, ♣9, ♥6, ♠3
