@@ -590,7 +590,7 @@
       log("Sent: " + JSON.stringify(msg));
     }
 
-    function user_bet() {
+    function user_bet(actionId) {
       if (!G_ROOM_ID) {
         alert('Join room, please');
         return;
@@ -605,7 +605,7 @@
         {
           "action": "user_bet",
           "payload": {
-            "action": "CALL",
+            "action": actionId,
             "raiseValue": 0
           }
         }
