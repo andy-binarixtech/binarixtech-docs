@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>POKER GAME</title>
+
+  <!-- info -->
   <style>
     .info {
-      border: 2px solid #6a0dad; /* viền tím */
-      margin: 10px;
-      padding: 10px;
+      border: 2px solid #6a0dad;
+      margin: 5px;
+      padding: 5px;
       border-radius: 8px;
-      background-color: #f3e8ff; /* nền tím nhạt */
+      background-color: #f3e8ff;
       font-family: Arial, sans-serif;
     }
 
@@ -23,13 +25,9 @@
       color: #4b0082; /* tím đậm hơn */
     }
 
-    #group-id-button-container {
-      margin-top: 10px;
-    }
-
     #group-id-button-container button {
-      background-color: #6a0dad; /* nền tím */
-      color: white; /* chữ trắng */
+      background-color: #6a0dad;
+      color: white;
       border: none;
       padding: 8px 12px;
       margin: 5px;
@@ -39,7 +37,7 @@
     }
 
     #group-id-button-container button:hover {
-      background-color: #4b0082; /* tím đậm khi hover */
+      background-color: #4b0082;
     }
   </style>
 
@@ -226,14 +224,14 @@
     }
   </style> -->
 
+  <!-- Button Actions -->
   <style>
     .button-container {
-      padding: 10px;
-      display: none; /* Ẩn mặc định */
+      display: none;
     }
 
     .button-container button {
-      background-color: #6a0dad; /* tím chủ đạo */
+      background-color: #6a0dad;
       color: white;
       border: none;
       padding: 8px 14px;
@@ -241,23 +239,23 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
-      /* transition: background-color 0.3s, transform 0.2s; */
+      transition: background-color 0.3s, transform 0.2s;
     }
 
     .button-container button:hover {
-      background-color: #4b0082; /* tím đậm khi hover */
+      background-color: #4b0082;
       transform: scale(1.05);
     }
 
     .toggle-btn {
-      background-color: #6a0dad;
+      background-color: #9d61c9;
       color: white;
       border: none;
       padding: 8px 14px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
 
     .toggle-btn:hover {
@@ -268,6 +266,10 @@
   <style>
     /* Nút toggle log */
     .toggle-log-btn {
+      position: fixed; 
+      bottom: 5px;
+      /* left: 0; */
+      right: 5px;
       background-color: #6a0dad;
       color: white;
       border: none;
@@ -275,7 +277,7 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
-      margin-top: 10px;
+      z-index: 10000;
     }
 
     .toggle-log-btn:hover {
@@ -283,25 +285,21 @@
     }
 
     /* Thẻ log phong cách terminal */
-    body {
-      margin: 0;
-      padding-bottom: 255px; /* chừa khoảng trống bằng chiều cao log */
-    }
-    #log-wrapper {
-      display: block; /* Ẩn mặc định */
-      position: fixed; /* luôn nằm dưới */
-      bottom: 0;
+    #log {
+      display: none;
+      position: fixed;
       left: 0;
       right: 0;
-      height: 250px;
-      background-color: #1e1e1e; /* nền tối kiểu terminal */
+      height: 50%;
+      bottom: 0; /* full màn hình */
+      background-color: #1e1e1e; /* nền terminal */
       color: #00ff00; /* chữ xanh lá */
       font-family: "Courier New", monospace;
       padding: 10px;
       overflow-y: auto;
-      border-top: 2px solid #6a0dad; /* viền tím phía trên */
+      z-index: 9999; /* nằm trên cùng */
       box-shadow: 0 -4px 10px rgba(106, 13, 173, 0.6);
-      transition: height 0.3s ease; /* hiệu ứng mượt khi thay đổi chiều cao */
+      transition: height 0.3s ease;
     }
 
     .log-line {
@@ -323,57 +321,68 @@
       background-color: #4b0082;
     }
   </style>
+
+  <!-- main -->
+  <style>
+    .main {
+      padding-left: 5px;
+      padding-right: 5px;;
+    }
+  </style>
 </head>
 <body>
-  <h2>POKER BOT</h2>
+  <div class="main">
+    <h2>POKER BOT</h2>
+    <button class="toggle-btn" onclick="toggleButtons()">Actions</button>
+    <div class="button-container" id="buttonContainer">
+      <button onclick="connect()">Connect</button>
+      <button onclick="login()">Login</button>
+      <button onclick="get_room_types()">get room types</button>
+      <button onclick="search_room()">search room</button>
+      <button onclick="create_room()">create room</button>
+      <button onclick="get_rooms()">get rooms</button>
+      <button onclick="join_room(G_ROOM_ID)">Join Room</button>
+      <button onclick="ping()">PING</button>
+      <button onclick="send_msg_to_room()">send msg to room</button>
+      <button onclick="user_infor()">user info</button>
+    </div>
 
-  <button class="toggle-btn" onclick="toggleButtons()">Show/Hide Buttons</button>
-  <div class="button-container" id="buttonContainer">
-    <button onclick="connect()">Connect</button>
-    <button onclick="login()">Login</button>
-    <button onclick="get_room_types()">get room types</button>
-    <button onclick="search_room()">search room</button>
-    <button onclick="create_room()">create room</button>
-    <button onclick="get_rooms()">get rooms</button>
-    <button onclick="join_room(G_ROOM_ID)">Join Room</button>
-    <button onclick="ping()">PING</button>
-    <button onclick="send_msg_to_room()">send msg to room</button>
-  </div>
+    <div id="controls">
+      <button onclick="quick_start()">Quick Start</button>
+      <button id="clearBtn">🧹 Clear Log</button>
+    </div>
 
-  <div id="controls" style="padding: 10px;">
-    <button onclick="quick_start()">Quick Start</button>
-    <button id="clearBtn">🧹 Clear Log</button>
-  </div>
+    <div class="info">
+      <di>
+        <span class="title">User Id: </span>
+        <span id='userId'></span>
+      </di>
+      <div>
+        <span class="title">Room Id: </span>
+        <span id='roomId'></span>
+      </div>
+      <div>
+        <span class="title">Group Id: </span>
+        <span id='groupId'></span>
+        <div id="group-id-button-container"></div>
+      </div>
+    </div>
 
-  <div class="info">
-    <span class="title">User Id: </span>
-    <span id='userId'></span>
-  </div>
-  <div class="info">
-    <span class="title">Group Id: </span>
-    <span id='groupId'></span>
-    <div id="group-id-button-container"></div>
-  </div>
-  <div class="info">
-    <span class="title">Room Id: </span>
-    <span id='roomId'></span>
-  </div>
-
-  <div id="selectedRoomId"></div>
-  <div id="rooms-container"></div>
-  <div id="players-container"></div>
-  <div id="table-container"></div>
-  <div id="actions-container"></div>
+    <div id="selectedRoomId"></div>
+    <div id="rooms-container"></div>
+    <div id="players-container"></div>
+    <div id="table-container"></div>
+    <div id="actions-container"></div>
   
-  <!-- <pre id="log"></pre> -->
-   <!-- Nút toggle -->
-  <div id="log-wrapper">
-    <button class="toggle-log-btn" onclick="toggleLog()">Show/Hide Log</button>
-    <button class="resize-btn" onclick="increaseLog()">Increase Height</button>
-    <button class="resize-btn" onclick="decreaseLog()">Decrease Height</button>
-    <div id="log"></div>
-  </div>
-  
+      <!-- <pre id="log"></pre> -->
+      <!-- Nút toggle -->
+
+      
+      <div id="log-wrapper">
+        <button class="toggle-log-btn" onclick="toggleLog()">Show/Hide Log</button>
+        <div id="log" style="display: none;"></div>
+      </div>
+    </div>
   <script>
     let socket;
     let G_USER_ID
@@ -670,6 +679,25 @@
       log("Sent: " + JSON.stringify(msg));
     }
 
+    function user_infor() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      const zonePluginMessage = [
+        6,
+        zoneName,
+        pluginName,
+        {
+          "action": "user_infor",
+          "requestId": "test_123_abc",
+          "payload": {}
+        }
+      ];
+      const msg = zonePluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
     function search_room() {
       if (!G_GROUP_ID) {
         alert('Select group id, please');
@@ -799,6 +827,8 @@
       if (!isSocketConnected()) {
         return;
       }
+      let raiseValue = 0;
+      raiseValue = (actionId == 'RAISE') ? 2000 : 0;
       const roomPluginMessage = [
         5,
         zoneName,
@@ -807,7 +837,7 @@
           "action": "user_bet",
           "payload": {
             "action": actionId,
-            "raiseValue": 0
+            "raiseValue": raiseValue
           }
         }
       ];
@@ -905,7 +935,7 @@
 
     function showPlayerInfos(players) {
       const container = document.getElementById("players-container");
-      container.innerHTML = ""; // clear old content
+      container.innerHTML = "";
 
       players.forEach(player => {
         const card = document.createElement("div");
@@ -930,8 +960,8 @@
  
         const handDiv = document.createElement("div");
         handDiv.className = "player-hand";
-        if (player.hand && player.hand.length > 0) {
-          player.hand.forEach(cardInfo => {
+        if (player.handCards && player.handCards.length > 0) {
+          player.handCards.forEach(cardInfo => {
             const cardEl = document.createElement("div");
             cardEl.className = "card";
             cardEl.textContent = `${cardInfo.cardSpriteName} (${cardInfo.rank} ${cardInfo.suit})`;
@@ -1109,12 +1139,12 @@
     function toggleLog() {
       const log = document.getElementById("log");
       log.style.display = log.style.display === "none" ? "block" : "none";
-      const logWrapper = document.getElementById("log-wrapper");
-      if (log.style.display === "none") {
-        logWrapper.style.height = "100px";
-      } else {
-        logWrapper.style.height = null;
-      }
+      // const logWrapper = document.getElementById("log-wrapper");
+      // if (log.style.display === "none") {
+      //   logWrapper.style.height = "100px";
+      // } else {
+      //   logWrapper.style.height = null;
+      // }
     }
 
     function increaseLog() {
