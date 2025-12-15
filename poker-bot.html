@@ -4,6 +4,50 @@
   <meta charset="UTF-8">
   <title>POKER GAME</title>
   <style>
+    .info {
+      border: 2px solid #6a0dad; /* viền tím */
+      margin: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #f3e8ff; /* nền tím nhạt */
+      font-family: Arial, sans-serif;
+    }
+
+    .info title {
+      color: #6a0dad; /* chữ tím */
+      font-weight: bold;
+    }
+
+    #groupId {
+      margin-left: 5px;
+      color: #4b0082; /* tím đậm hơn */
+    }
+
+    #group-id-button-container {
+      margin-top: 10px;
+    }
+
+    #group-id-button-container button {
+      background-color: #6a0dad; /* nền tím */
+      color: white; /* chữ trắng */
+      border: none;
+      padding: 8px 12px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #group-id-button-container button:hover {
+      background-color: #4b0082; /* tím đậm khi hover */
+    }
+  </style>
+
+  <style>
+    #controls button {
+      margin: 5px;
+    }
+
     .action-container {
       display: flex;
       gap: 10px;
@@ -73,16 +117,15 @@
     .player-card {
       border: 1px solid #ccc;
       border-radius: 8px;
-      padding: 12px;
-      margin: 10px;
-      width: 280px;
+      padding: 10px;
+      margin: 5px;
       display: inline-block;
       text-align: center;
       background: #f9f9f9;
     }
     .player-card img {
-      width: 20px;
-      height: 20px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       object-fit: cover;
       margin-bottom: 10px;
@@ -111,7 +154,7 @@
   </style>
 
   <style>
-    #log {
+    /* #log {
       font-family: monospace;
       border: 1px solid #ccc;
       padding: 8px;
@@ -147,12 +190,145 @@
     }
     .log-icon {
       font-size: 1.2em;
+    } */
+  </style>
+
+
+  <!-- <style>
+    .button-container {
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button-container button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    }
+
+    .button-container button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(0,0,0,0.25);
+      background: linear-gradient(135deg, #43e97b, #38f9d7);
+    }
+
+    .button-container button:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+  </style> -->
+
+  <style>
+    .button-container {
+      padding: 10px;
+      display: none; /* Ẩn mặc định */
+    }
+
+    .button-container button {
+      background-color: #6a0dad; /* tím chủ đạo */
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      margin: 5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      /* transition: background-color 0.3s, transform 0.2s; */
+    }
+
+    .button-container button:hover {
+      background-color: #4b0082; /* tím đậm khi hover */
+      transform: scale(1.05);
+    }
+
+    .toggle-btn {
+      background-color: #6a0dad;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .toggle-btn:hover {
+      background-color: #4b0082;
+    }
+  </style>
+
+  <style>
+    /* Nút toggle log */
+    .toggle-log-btn {
+      background-color: #6a0dad;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .toggle-log-btn:hover {
+      background-color: #4b0082;
+    }
+
+    /* Thẻ log phong cách terminal */
+    body {
+      margin: 0;
+      padding-bottom: 40%; /* chừa khoảng trống bằng chiều cao log */
+    }
+    #log {
+      display: block; /* Ẩn mặc định */
+      position: fixed; /* luôn nằm dưới */
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background-color: #1e1e1e; /* nền tối kiểu terminal */
+      color: #00ff00; /* chữ xanh lá */
+      font-family: "Courier New", monospace;
+      padding: 10px;
+      overflow-y: auto;
+      border-top: 2px solid #6a0dad; /* viền tím phía trên */
+      box-shadow: 0 -4px 10px rgba(106, 13, 173, 0.6);
+      transition: height 0.3s ease; /* hiệu ứng mượt khi thay đổi chiều cao */
+    }
+
+    .log-line {
+      margin: 2px 0;
+    }
+
+    .resize-btn {
+      background-color: #6a0dad;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 5px;
+    }
+
+    .resize-btn:hover {
+      background-color: #4b0082;
     }
   </style>
 </head>
 <body>
-  <h2>Sicbo WebSocket Client</h2>
-  <div style="padding: 10px;">
+  <h2>POKER BOT</h2>
+
+  <button class="toggle-btn" onclick="toggleButtons()">Show/Hide Buttons</button>
+  <div class="button-container" id="buttonContainer">
     <button onclick="connect()">Connect</button>
     <button onclick="login()">Login</button>
     <button onclick="get_room_types()">get room types</button>
@@ -165,21 +341,21 @@
   </div>
 
   <div id="controls" style="padding: 10px;">
+    <button onclick="quick_start()">Quick Start</button>
     <button id="clearBtn">🧹 Clear Log</button>
   </div>
 
-
-  <div>
-    <span>User Id: </span>
+  <div class="info">
+    <span class="title">User Id: </span>
     <span id='userId'></span>
   </div>
-  <div>
-    <span>Group Id: </span>
+  <div class="info">
+    <span class="title">Group Id: </span>
     <span id='groupId'></span>
     <div id="group-id-button-container"></div>
   </div>
-  <div>
-    <span>Room Id: </span>
+  <div class="info">
+    <span class="title">Room Id: </span>
     <span id='roomId'></span>
   </div>
 
@@ -189,8 +365,14 @@
   <div id="table-container"></div>
   <div id="actions-container"></div>
   
-  <pre id="log"></pre>
-
+  <!-- <pre id="log"></pre> -->
+   <!-- Nút toggle -->
+  <button class="toggle-log-btn" onclick="toggleLog()">Show/Hide Log</button>
+  <button class="resize-btn" onclick="increaseLog()">Increase Height</button>
+  <button class="resize-btn" onclick="decreaseLog()">Decrease Height</button>
+  <div id="log"></div>
+  
+  
   <script>
     let socket;
     let G_USER_ID
@@ -199,8 +381,17 @@
     let G_PLAYER_INFOS = [];
     let G_TABLE_CARDS = [];
     let G_SELECTED_ROOM;
+    let G_QUICK = false;
     const zoneName = 'SicboZone';
     const pluginName = 'pokerGame';
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    async function quick_start() {
+      G_QUICK = true;
+      connect();
+    }
 
     function logNative(msg) {
       const timestamp = new Date().toISOString();
@@ -266,6 +457,9 @@
       socket.onopen = () => {
         log("Connected to server");
         socket.send(JSON.stringify({ action: "join_to_poker_game" }));
+        if (G_QUICK) {
+          login();
+        }
       };
 
       socket.onmessage = (event) => {
@@ -311,6 +505,9 @@
         if (roomTypes) {
           createButtonsFromJson(roomTypes);
           selectGroupId('POKER_2000');
+          if (G_QUICK) {
+            search_room();
+          }
         }
       }
 
@@ -419,6 +616,9 @@
         G_USER_ID = userId;
         showUserId();
         log("> User login success: " + userId);
+        if (G_QUICK) {
+          get_room_types();
+        }
       }
     }
 
@@ -895,8 +1095,34 @@
       const container = document.getElementById("actions-container");
       container.innerHTML = "";
     }
+  </script>
 
-    createActionButtons(actions);
+  <script>
+    function toggleButtons() {
+      const container = document.getElementById("buttonContainer");
+      container.style.display = container.style.display === "none" ? "block" : "none";
+    }
+  </script>
+
+  <script>
+    function toggleLog() {
+      const log = document.getElementById("log");
+      log.style.display = log.style.display === "none" ? "block" : "none";
+    }
+
+    function increaseLog() {
+      const log = document.getElementById("log");
+      let currentHeight = parseInt(window.getComputedStyle(log).height);
+      log.style.height = (currentHeight + 50) + "px"; // tăng 50px
+    }
+
+    function decreaseLog() {
+      const log = document.getElementById("log");
+      let currentHeight = parseInt(window.getComputedStyle(log).height);
+      if (currentHeight > 100) { // giới hạn tối thiểu 100px
+        log.style.height = (currentHeight - 50) + "px"; // giảm 50px
+      }
+    }
   </script>
 </body>
 </html>
