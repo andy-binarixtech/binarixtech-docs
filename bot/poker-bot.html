@@ -285,15 +285,15 @@
     /* Thẻ log phong cách terminal */
     body {
       margin: 0;
-      padding-bottom: 40%; /* chừa khoảng trống bằng chiều cao log */
+      padding-bottom: 255px; /* chừa khoảng trống bằng chiều cao log */
     }
-    #log {
+    #log-wrapper {
       display: block; /* Ẩn mặc định */
       position: fixed; /* luôn nằm dưới */
       bottom: 0;
       left: 0;
       right: 0;
-      height: 40%;
+      height: 250px;
       background-color: #1e1e1e; /* nền tối kiểu terminal */
       color: #00ff00; /* chữ xanh lá */
       font-family: "Courier New", monospace;
@@ -367,11 +367,12 @@
   
   <!-- <pre id="log"></pre> -->
    <!-- Nút toggle -->
-  <button class="toggle-log-btn" onclick="toggleLog()">Show/Hide Log</button>
-  <button class="resize-btn" onclick="increaseLog()">Increase Height</button>
-  <button class="resize-btn" onclick="decreaseLog()">Decrease Height</button>
-  <div id="log"></div>
-  
+  <div id="log-wrapper">
+    <button class="toggle-log-btn" onclick="toggleLog()">Show/Hide Log</button>
+    <button class="resize-btn" onclick="increaseLog()">Increase Height</button>
+    <button class="resize-btn" onclick="decreaseLog()">Decrease Height</button>
+    <div id="log"></div>
+  </div>
   
   <script>
     let socket;
@@ -1108,6 +1109,12 @@
     function toggleLog() {
       const log = document.getElementById("log");
       log.style.display = log.style.display === "none" ? "block" : "none";
+      const logWrapper = document.getElementById("log-wrapper");
+      if (log.style.display === "none") {
+        logWrapper.style.height = "100px";
+      } else {
+        logWrapper.style.height = null;
+      }
     }
 
     function increaseLog() {
