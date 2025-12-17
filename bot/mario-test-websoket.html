@@ -57,6 +57,9 @@
     <button onclick="placeBet('BIG', 1000)">Đặt Tài 1000</button>
     <button onclick="placeBet('SMALL', 2000)">Đặt Xỉu 2000</button>
     <button onclick="get_current_time()">get now</button>
+
+    <button onclick="user_infor()">user infor</button>
+    <button onclick="get_room_type()">get room type</button>
   </div>
 
   <div id="controls" style="padding: 10px;">
@@ -115,7 +118,7 @@
 
     function connect() {
       // đổi port nếu server bạn chạy khác
-      socket = new WebSocket("ws://192.168.1.4:8892/websocket");
+      socket = new WebSocket("ws://localhost:8892/websocket");
 
       socket.onopen = () => {
         log("Connected to server");
@@ -268,6 +271,39 @@
         return false;
       }
       return true;
+    }
+
+    function user_infor() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      const msg = [
+        6,
+        zoneName,
+        pluginName,
+        {
+          "action": "user_infor"
+        }
+      ];
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
+    }
+
+      function get_room_type() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      const msg = [
+        6,
+        zoneName,
+        pluginName,
+        {
+          "action": "get_room_type",
+          "payload": {}
+        }
+      ];
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
     }
 
     document.getElementById("clearBtn").addEventListener("click", () => {

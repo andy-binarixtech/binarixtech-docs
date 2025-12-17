@@ -113,11 +113,12 @@
 
   <style>
     .player-card {
+      height: 200px;
       border: 1px solid #ccc;
       border-radius: 8px;
       padding: 10px;
       margin: 5px;
-      display: inline-block;
+      display: inline-table;
       text-align: center;
       background: #f9f9f9;
     }
@@ -499,8 +500,8 @@
       const dataResponse = jsonResponse[1];
       const action = dataResponse?.action;
       const eventServer = dataResponse.event;
-      if ( (action === 'search_room' && eventServer === 'room_info') 
-          || (action === 'create_room' && eventServer === 'room_info') ) {
+      if ( (action === 'search_room' && eventServer === 'search_room') 
+          || (action === 'create_room' && eventServer === 'create_room') ) {
         const datas = dataResponse?.datas;
         const roomInfo = datas?.roomInfo;
         const roomId = roomInfo?.roomId;
@@ -509,7 +510,7 @@
           join_room(roomId);
         }
       }
-      if (action === 'get_room_types' && eventServer === 'room_types') {
+      if (action === 'get_room_types' && eventServer === 'get_room_types') {
         const datas = dataResponse?.datas;
         const roomTypes = datas?.roomTypes;
         if (roomTypes) {
