@@ -1,0 +1,55 @@
+/* Toggle log */
+.toggle-log-btn {
+    position: fixed; 
+    bottom: 5px;
+    right: 5px;
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 10000;
+}
+
+.toggle-log-btn:hover {
+    background-color: #4b0082;
+}
+
+/* Log */
+#log {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 50%;
+    bottom: 0; /* full màn hình */
+    background-color: #1e1e1e; /* nền terminal */
+    color: #00ff00; /* chữ xanh lá */
+    font-family: "Courier New", monospace;
+    padding: 10px;
+    overflow-y: auto;
+    z-index: 9999; /* nằm trên cùng */
+    box-shadow: 0 -4px 10px rgba(106, 13, 173, 0.6);
+    transition: height 0.3s ease;
+}
+
+.log-line {
+    margin: 2px 0;
+}
+
+.resize-btn {
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.resize-btn:hover {
+    background-color: #4b0082;
+}

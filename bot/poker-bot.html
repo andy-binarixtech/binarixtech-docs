@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>POKER GAME</title>
+  <link rel="stylesheet" href="./css/main.css">
 
   <!-- info -->
   <style>
@@ -152,79 +153,6 @@
     }
   </style>
 
-  <style>
-    /* #log {
-      font-family: monospace;
-      border: 1px solid #ccc;
-      padding: 8px;
-      max-height: 300px;
-      overflow-y: auto;
-      background: #f9f9f9;
-    }
-    .log-entry {
-      display: block;
-      border-bottom: 1px solid #eee;
-      padding: 4px 0;
-      align-items: center;
-    }
-    .log-time {
-      width: 200px;
-      color: #888;
-      font-weight: bold;
-    }
-    .log-msg {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .log-msg.sent {
-      color: green;
-    }
-    .log-msg.received {
-      color: blue;
-    }
-    .log-msg.error {
-      color: red;
-    }
-    .log-icon {
-      font-size: 1.2em;
-    } */
-  </style>
-
-
-  <!-- <style>
-    .button-container {
-      padding: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .button-container button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    }
-
-    .button-container button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 10px rgba(0,0,0,0.25);
-      background: linear-gradient(135deg, #43e97b, #38f9d7);
-    }
-
-    .button-container button:active {
-      transform: scale(0.95);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-  </style> -->
-
   <!-- Button Actions -->
   <style>
     .button-container {
@@ -264,76 +192,17 @@
     }
   </style>
 
-  <style>
-    /* Nút toggle log */
-    .toggle-log-btn {
-      position: fixed; 
-      bottom: 5px;
-      /* left: 0; */
-      right: 5px;
-      background-color: #6a0dad;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      z-index: 10000;
-    }
-
-    .toggle-log-btn:hover {
-      background-color: #4b0082;
-    }
-
-    /* Thẻ log phong cách terminal */
-    #log {
-      display: none;
-      position: fixed;
-      left: 0;
-      right: 0;
-      height: 50%;
-      bottom: 0; /* full màn hình */
-      background-color: #1e1e1e; /* nền terminal */
-      color: #00ff00; /* chữ xanh lá */
-      font-family: "Courier New", monospace;
-      padding: 10px;
-      overflow-y: auto;
-      z-index: 9999; /* nằm trên cùng */
-      box-shadow: 0 -4px 10px rgba(106, 13, 173, 0.6);
-      transition: height 0.3s ease;
-    }
-
-    .log-line {
-      margin: 2px 0;
-    }
-
-    .resize-btn {
-      background-color: #6a0dad;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      margin: 5px;
-    }
-
-    .resize-btn:hover {
-      background-color: #4b0082;
-    }
-  </style>
 
   <!-- main -->
   <style>
     .main {
-      padding-left: 5px;
-      padding-right: 5px;;
+      padding: 5px;
     }
   </style>
 </head>
 <body>
   <div class="main">
-    <h2>POKER BOT</h2>
+    <h3>POKER BOT</h3>
     <button class="toggle-btn" onclick="toggleButtons()">Actions</button>
     <div class="button-container" id="buttonContainer">
       <button onclick="connect()">Connect</button>
@@ -374,6 +243,7 @@
     <div id="players-container"></div>
     <div id="table-container"></div>
     <div id="actions-container"></div>
+    <div id="raise-container"></div>
   
       <!-- <pre id="log"></pre> -->
       <!-- Nút toggle -->
@@ -610,6 +480,7 @@
         const action = datas?.action;
         if (action) {
           createActionButtons(action);
+          createRaiseSlider(datas);
         }
       }
 
@@ -826,7 +697,7 @@
       log("Sent: " + JSON.stringify(msg));
     }
 
-    function user_bet(actionId) {
+    function user_bet(actionId, raiseValue) {
       if (!G_ROOM_ID) {
         alert('Join room, please');
         return;
@@ -834,8 +705,8 @@
       if (!isSocketConnected()) {
         return;
       }
-      let raiseValue = 0;
-      raiseValue = (actionId == 'RAISE') ? 2000 : 0;
+      // let raiseValue = 0;
+      // raiseValue = (actionId == 'RAISE') ? 2000 : 0;
       const roomPluginMessage = [
         5,
         zoneName,
@@ -1171,6 +1042,83 @@
         log.style.height = (currentHeight - 50) + "px"; 
       }
     }
+  </script>
+
+  <script>
+    function createRaiseSlider(data) {
+      const { minRaise, maxRaise, step } = data;
+      clearRaiseSlider();
+
+      // 1. Tạo container chứa các phần tử
+      // const container = document.createElement('div');
+      const container = document.getElementById("raise-container");
+      container.style.margin = '20px';
+      container.style.padding = '10px';
+      container.style.border = '1px solid #ccc';
+
+      // 2. Tạo nhãn hiển thị giá trị hiện tại
+      const label = document.createElement('div');
+      label.innerHTML = `Giá trị chọn: <strong>${minRaise}</strong>`;
+      label.style.marginBottom = '10px';
+
+      // 3. Tạo thanh trượt (input range)
+      const slider = document.createElement('input');
+      slider.type = 'range';
+      slider.min = minRaise;
+      slider.max = maxRaise;
+      slider.step = 1000; // "increase" trong yêu cầu của bạn
+      slider.value = minRaise;
+      slider.style.width = '100%';
+
+      // Cập nhật nhãn khi kéo thanh trượt
+      slider.oninput = function() {
+          label.innerHTML = `Giá trị chọn: <strong>${this.value}</strong>`;
+      };
+
+      // 4. Tạo nút Confirm
+      const btn = document.createElement('button');
+      btn.innerText = 'Confirm';
+      btn.style.marginTop = '10px';
+      btn.onclick = function() {
+          user_bet("RAISE", slider.value)
+          // // Gọi hàm raise() và truyền giá trị hiện tại của slider
+          // if (typeof raise === "function") {
+              
+          // } else {
+          //     // Nếu raise chỉ là tên hàm trong scope toàn cục
+          //     window.raise(slider.value);
+          // }
+      };
+
+      // 5. Thêm tất cả vào container và đưa ra body (hoặc một div cụ thể)
+      container.appendChild(label);
+      container.appendChild(slider);
+      container.appendChild(document.createElement('br'));
+      container.appendChild(btn);
+      
+      document.body.appendChild(container);
+  }
+
+  // Giả lập hàm raise để kiểm tra
+  function raise(value) {
+      alert("Đã xác nhận raise: " + value);
+  }
+
+  // Dữ liệu đầu vào của bạn
+  const config = {
+      "maxRaise": 998000,
+      "minRaise": 4000,
+      "raise": 1000 // Đây là bước nhảy (step)
+  };
+
+  // Gọi hàm để tạo giao diện
+  // createRaiseSlider(config);
+  function clearRaiseSlider() {
+      const container = document.getElementById("raise-container");
+      if (container) {
+          container.innerHTML = "";
+      }
+  }
   </script>
 </body>
 </html>
