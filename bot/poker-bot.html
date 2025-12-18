@@ -618,6 +618,12 @@
         const success = datas?.success;
         clearActionButtons();
       }
+
+      if (action === 'end_game' && eventServer === 'end_game') {
+        const datas = dataResponse?.datas;
+        clearTable();
+        // clearPlayerHand();
+      }
     }
 
     function process_response_1(jsonResponse) {
@@ -1127,6 +1133,16 @@
       const container = document.getElementById("actions-container");
       container.innerHTML = "";
     }
+
+    function clearTable() {
+      const container = document.getElementById("table-container");
+      container.innerHTML = "";
+    }
+
+    function clearPlayerHand() {
+      const container = document.getElementById("player-hand");
+      container.innerHTML = "";
+    }
   </script>
 
   <script>
@@ -1140,25 +1156,19 @@
     function toggleLog() {
       const log = document.getElementById("log");
       log.style.display = log.style.display === "none" ? "block" : "none";
-      // const logWrapper = document.getElementById("log-wrapper");
-      // if (log.style.display === "none") {
-      //   logWrapper.style.height = "100px";
-      // } else {
-      //   logWrapper.style.height = null;
-      // }
     }
 
     function increaseLog() {
       const log = document.getElementById("log");
       let currentHeight = parseInt(window.getComputedStyle(log).height);
-      log.style.height = (currentHeight + 50) + "px"; // tăng 50px
+      log.style.height = (currentHeight + 50) + "px"; 
     }
 
     function decreaseLog() {
       const log = document.getElementById("log");
       let currentHeight = parseInt(window.getComputedStyle(log).height);
-      if (currentHeight > 100) { // giới hạn tối thiểu 100px
-        log.style.height = (currentHeight - 50) + "px"; // giảm 50px
+      if (currentHeight > 100) { 
+        log.style.height = (currentHeight - 50) + "px"; 
       }
     }
   </script>
