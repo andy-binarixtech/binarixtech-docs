@@ -219,6 +219,7 @@
 
     <div id="controls">
       <button onclick="quick_start()">Quick Start</button>
+      <button onclick="user_start_game()">start game</button>
       <button id="clearBtn">🧹 Clear Log</button>
     </div>
 
@@ -422,6 +423,7 @@
       if (action === 'deal_hole_cards' && eventServer === 'deal_hole_cards') {
         const datas = dataResponse?.datas;
         const playerInfo = datas?.playerInfo;
+        console.log(playerRoles);
         updatePlayerInfo(G_PLAYER_INFOS, playerInfo);
         if (G_PLAYER_INFOS) {
           showPlayerInfos(G_PLAYER_INFOS);
@@ -490,9 +492,19 @@
         clearActionButtons();
       }
 
+      if (action === 'player_result' && eventServer === 'player_result') {
+        const datas = dataResponse?.datas;
+        const playerResults = datas?.playerResults;
+        updatePlayerResult(G_PLAYER_INFOS, playerResults);
+        if (G_PLAYER_INFOS) {
+          showPlayerInfos(G_PLAYER_INFOS);
+        }
+      }
+
       if (action === 'end_game' && eventServer === 'end_game') {
         const datas = dataResponse?.datas;
         clearTable();
+        clearRaiseSlider();
         // clearPlayerHand();
       }
     }
@@ -724,6 +736,30 @@
       log("Sent: " + JSON.stringify(msg));
     }
 
+    function user_start_game() {
+      if (!G_ROOM_ID) {
+        alert('Join room, please');
+        return;
+      }
+      if (!isSocketConnected()) {
+        return;
+      }
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "user_start_game",
+          "payload": {
+
+          }
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
     function isSocketConnected() {
       if (!socket || socket.readyState !== WebSocket.OPEN) {
         log("Socket chưa kết nối", "error");
@@ -831,8 +867,8 @@
         info.className = "player-info";
         info.innerHTML = `
           Seat: ${player.seatIndex} <br>
-          Chips: ${player.chip} <br>
           Balance: ${player.balance} <br>
+          newBalance: ${player.newBalance} <br>
           role: ${player?.role}
         `;
  
@@ -865,6 +901,17 @@
       players.push(updatedInfo);
     }
 
+    return players;
+  }
+
+  function updatePlayerResult(players, playerResults) {
+    playerResults.forEach(result => {
+      const index = players.findIndex(p => p.name === result.userID);
+      if (index !== -1) {
+        players[index].balance = result.balance;
+        players[index].newBalance = result.newBalance;
+      }
+    });
     return players;
   }
 
