@@ -23,7 +23,7 @@
 
     function connect() {
       // đổi port nếu server bạn chạy khác
-      socket = new WebSocket("ws://localhost:8892/websocket");
+      socket = new WebSocket("ws://43.199.112.106:8897/websocket");
 
       socket.onopen = () => {
         log("✅ Connected to server");

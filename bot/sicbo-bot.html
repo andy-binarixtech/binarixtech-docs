@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>POKER GAME</title>
+  <title>SICBO GAME</title>
   <link rel="stylesheet" href="./css/main.css">
 
   <!-- info -->
@@ -202,28 +202,60 @@
 </head>
 <body>
   <div class="main">
-    <h3>POKER BOT</h3>
+    <h3>SICBO BOT</h3>
     <button class="toggle-btn" onclick="toggleButtons()">Actions</button>
     <div class="button-container" id="buttonContainer" style="display: none;">
       <button onclick="connect()">Connect</button>
       <button onclick="login()">Login</button>
+      <button onclick="login_2()">Login 2</button>
       <button onclick="get_room_types()">get room types</button>
       <button onclick="search_room()">search room</button>
       <button onclick="create_room()">create room</button>
       <button onclick="get_rooms()">get rooms</button>
-      <button onclick="room_data()">get rooms</button>
       <button onclick="join_room(G_ROOM_ID)">Join Room</button>
-      <button onclick="ping()">PING</button>
-      <button onclick="send_msg_to_room()">send msg to room</button>
-      <button onclick="user_infor()">user info</button>
 
-      <button onclick="deposit()">deposit</button>
+      <div>
+        
+        <!-- <button onclick="placeBet('BIG', 100000)">Đặt Tài 1000</button> -->
+        <!-- <button onclick="placeBet('SMALL', 200000)">Đặt Xỉu 2000</button> -->
+      </div>
+      <div>
+        <button onclick="get_user_info()">get_user_info</button>
+        <button onclick="get_table_info()">get table info</button>
+        <button onclick="bet_history()">bet_history</button>
+        <button onclick="bet_history_for_table()">bet_history_for_table</button>
+        <button onclick="rebet()">rebet</button>
+        <button onclick="user_info()">user_info</button>
+      </div>
+      <div>
+        <button onclick="ping()">PING</button>
+      </div>
+      <div>
+        <label for="diceInput">Nhập kết quả xúc xắc (ví dụ: 1,2,3):</label>
+        <input type="text" id="diceInput" placeholder="Nhập 3 số từ 1-6" />
+        <button onclick="set_mode('PROD')">set_mode PROD</button>
+        <button onclick="set_mode('TEST')">set_mode TEST</button>
+      </div>  
     </div>
 
     <div id="controls">
-      <button onclick="quick_start()">Quick Start</button>
-      <button onclick="user_start_game()">start game</button>
       <button id="clearBtn">🧹 Clear Log</button>
+    </div>
+
+    <div>
+      <button onclick="deposit()">deposit</button>
+      <!-- chọn side -->
+      <label for="betSide">Chọn cửa:</label>
+      <select id="betSide">
+
+      </select>
+
+      <!-- nhập số tiền -->
+      <label for="betAmount">Số tiền:</label>
+      <input type="number" id="betAmount" value="50000" placeholder="Nhập số tiền" />
+
+      <!-- button -->
+      <button onclick="placeBet()">Đặt cược</button>
     </div>
 
     <div class="info">
@@ -268,15 +300,7 @@
     let G_SELECTED_ROOM;
     let G_QUICK = false;
     const zoneName = 'SicboZone';
-    const pluginName = 'pokerGame';
-
-    function delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    async function quick_start() {
-      G_QUICK = true;
-      connect();
-    }
+    const pluginName = 'sicboPlugin';
 
     function logNative(msg) {
       const timestamp = new Date().toISOString();
@@ -337,15 +361,12 @@
     }
 
     function connect() {
-      socket = new WebSocket("ws://localhost:8892/websocket");
       // socket = new WebSocket("wss://websocket.bigame.vip/ws1");
+      socket = new WebSocket("ws://localhost:8892/websocket");
 
       socket.onopen = () => {
         log("Connected to server");
-        socket.send(JSON.stringify({ action: "join_to_poker_game" }));
-        if (G_QUICK) {
-          login();
-        }
+        socket.send(JSON.stringify({ action: "join_to_sicbo_game" }));
       };
 
       socket.onmessage = (event) => {
@@ -382,6 +403,7 @@
         const roomId = roomInfo?.roomId;
         log("> room id: " + roomId);
         if (roomId) {
+          G_ROOM_ID = roomId;
           join_room(roomId);
         }
       }
@@ -390,10 +412,6 @@
         const roomTypes = datas?.roomTypes;
         if (roomTypes) {
           createButtonsFromJson(roomTypes);
-          selectGroupId('POKER_2000');
-          if (G_QUICK) {
-            search_room();
-          }
         }
       }
 
@@ -547,8 +565,26 @@
       const loginMessage = [
         1,
         zoneName,
-        userId,
+        "nina", 
         "", 
+        {}
+      ]
+
+      const msg = loginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Login message: " + JSON.stringify(msg));
+    }
+
+    function login_2() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      const userId = createUserId();
+      const loginMessage = [
+        1,
+        zoneName,
+        "jin", 
+        "pw_123", 
         {}
       ]
 
@@ -567,7 +603,7 @@
         pluginName,
         {
           "action": "get_room_types",
-          "requestId": "test_123_abc",
+          "requestId": generateRequestId(),
           "payload": {}
         }
       ];
@@ -576,7 +612,7 @@
       log("Sent: " + JSON.stringify(msg));
     }
 
-    function user_infor() {
+    function get_user_info() {
       if (!isSocketConnected()) {
         return;
       }
@@ -585,9 +621,10 @@
         zoneName,
         pluginName,
         {
-          "action": "user_infor",
-          "requestId": "test_123_abc",
-          "payload": {}
+          "action": "get_user_info",
+          "requestId": generateRequestId()
+          // ,
+          // "payload": {}
         }
       ];
       const msg = zonePluginMessage;
@@ -595,16 +632,152 @@
       log("Sent: " + JSON.stringify(msg));
     }
 
+    function get_table_info() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "get_table_info",
+          "requestId": generateRequestId(),
+          "payload": {}
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log(JSON.stringify(msg));
+    }
+
+    function user_info() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "user_info",
+          "requestId": generateRequestId(),
+          "payload": {}
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log(JSON.stringify(msg));
+    }
+
+    function placeBet() {
+      if (!isSocketConnected()) {
+        return;
+      }
+
+      const side = document.getElementById("betSide").value;
+      console.log("Chọn cửa: ", side);
+      console.log("Số tiền: ", document.getElementById("betAmount").value);
+      const amount = parseInt(document.getElementById("betAmount").value, 10);
+      console.log("Số tiền: ", amount);
+      if (!amount || amount <= 0) {
+        alert("Vui lòng nhập số tiền hợp lệ!");
+        return;
+      }
+
+      console.log("Đặt cược:", side, amount);
+
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "place_bet",
+          "requestId": generateRequestId(),
+          "payload": {
+            "side": side,
+            "amount": amount
+          }
+        }
+      ];
+
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
+    }
+
+    function bet_history() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "bet_history",
+          "requestId": generateRequestId(),
+          "payload": {}
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
+    }
+
+    function rebet() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "rebet",
+          "requestId": generateRequestId(),
+          "payload": {}
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
+    }
+
+    function bet_history_for_table() {
+      if (!isSocketConnected()) {
+        return;
+      }
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "bet_history_for_table",
+          "requestId": generateRequestId(),
+          "payload": {}
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
+    }
+
     function deposit() {
+      if (!isSocketConnected()) {
+        return;
+      }
       const zonePluginMessage = [
         6,
         zoneName,
         pluginName,
         {
           "action": "deposit",
-          "requestId": "test_123_abc",
+          "requestId": generateRequestId(),
           "payload": {
-            "amount": 1000000
+            "amount": 200000
           }
         }
       ];
@@ -627,6 +800,7 @@
         pluginName,
         {
           "action": "search_room",
+          "requestId": generateRequestId(),
           "payload": {
               "groupId": G_GROUP_ID
           }
@@ -710,30 +884,6 @@
       log("Sent : " + JSON.stringify(msg));
     }
 
-    function send_msg_to_room() {
-      if (!G_ROOM_ID) {
-        alert('Join room, please');
-        return;
-      }
-      if (!isSocketConnected()) {
-        return;
-      }
-      const roomPluginMessage = [
-        5,
-        zoneName,
-        G_ROOM_ID,
-        {
-          "action": "send_msg_to_room",
-          "payload": {
-
-          }
-        }
-      ];
-      const msg = roomPluginMessage;
-      socket.send(JSON.stringify(msg));
-      log("Sent: " + JSON.stringify(msg));
-    }
-
     function user_bet(actionId, raiseValue) {
       if (!G_ROOM_ID) {
         alert('Join room, please');
@@ -753,52 +903,6 @@
           "payload": {
             "action": actionId,
             "raiseValue": raiseValue
-          }
-        }
-      ];
-      const msg = roomPluginMessage;
-      socket.send(JSON.stringify(msg));
-      log("Sent: " + JSON.stringify(msg));
-    }
-
-    function room_data() {
-      if (!G_ROOM_ID) {
-        alert('Join room, please');
-        return;
-      }
-      if (!isSocketConnected()) {
-        return;
-      }
-      const roomPluginMessage = [
-        5,
-        zoneName,
-        G_ROOM_ID,
-        {
-          "action": "room_data",
-          "payload": {}
-        }
-      ];
-      const msg = roomPluginMessage;
-      socket.send(JSON.stringify(msg));
-      log("Sent: " + JSON.stringify(msg));
-    }
-
-    function user_start_game() {
-      if (!G_ROOM_ID) {
-        alert('Join room, please');
-        return;
-      }
-      if (!isSocketConnected()) {
-        return;
-      }
-      const roomPluginMessage = [
-        5,
-        zoneName,
-        G_ROOM_ID,
-        {
-          "action": "user_start_game",
-          "payload": {
-
           }
         }
       ];
@@ -844,6 +948,9 @@
     }
     function createUserId(){
       return "user_" + randomId(); 
+    }
+    function generateRequestId() {
+      return crypto.randomUUID();
     }
 
     document.getElementById("clearBtn").addEventListener("click", () => {
@@ -1103,46 +1210,6 @@
   </script>
 
   <script>
-    function selectAction(actionId) {
-      alert("Bạn đã chọn action: " + actionId);
-      user_bet(actionId);
-    }
-
-    function createActionButtons(actionArray) {
-      const container = document.getElementById("actions-container");
-      container.innerHTML = "";
-
-      const actionDiv = document.createElement("div");
-      actionDiv.className = "action-container";
-
-      actionArray.forEach(actionId => {
-        const btn = document.createElement("button");
-        btn.className = "action-button";
-        btn.textContent = actionId;
-        btn.onclick = () => selectAction(actionId);
-        actionDiv.appendChild(btn);
-      });
-
-      container.appendChild(actionDiv);
-    }
-
-    function clearActionButtons() {
-      const container = document.getElementById("actions-container");
-      container.innerHTML = "";
-    }
-
-    function clearTable() {
-      const container = document.getElementById("table-container");
-      container.innerHTML = "";
-    }
-
-    function clearPlayerHand() {
-      const container = document.getElementById("player-hand");
-      container.innerHTML = "";
-    }
-  </script>
-
-  <script>
     function toggleButtons() {
       const container = document.getElementById("buttonContainer");
       container.style.display = container.style.display === "none" ? "block" : "none";
@@ -1154,97 +1221,67 @@
       const log = document.getElementById("log");
       log.style.display = log.style.display === "none" ? "block" : "none";
     }
-
-    function increaseLog() {
-      const log = document.getElementById("log");
-      let currentHeight = parseInt(window.getComputedStyle(log).height);
-      log.style.height = (currentHeight + 50) + "px"; 
-    }
-
-    function decreaseLog() {
-      const log = document.getElementById("log");
-      let currentHeight = parseInt(window.getComputedStyle(log).height);
-      if (currentHeight > 100) { 
-        log.style.height = (currentHeight - 50) + "px"; 
-      }
-    }
   </script>
 
   <script>
-    function createRaiseSlider(data) {
-      const { minRaise, maxRaise, step } = data;
-      clearRaiseSlider();
+    const betSides = [
+      "BIG","SMALL",
+      "LEO1","LEO2","LEO3","LEO4","LEO5","LEO6",
+      "ANY_LEO",
+      "ODD","EVEN",
+      "SUM4","SUM5","SUM6","SUM7","SUM8","SUM9","SUM10","SUM11","SUM12","SUM13","SUM14","SUM15","SUM16","SUM17",
+      "DICE1SG","DICE2SG","DICE3SG","DICE4SG","DICE5SG","DICE6SG",
+      "DICE1DB","DICE2DB","DICE3DB","DICE4DB","DICE5DB","DICE6DB",
+      "DICE12","DICE13","DICE14","DICE15","DICE16",
+      "DICE23","DICE24","DICE25","DICE26",
+      "DICE34","DICE35","DICE36",
+      "DICE45","DICE46","DICE56"
+    ];
 
-      // 1. Tạo container chứa các phần tử
-      // const container = document.createElement('div');
-      const container = document.getElementById("raise-container");
-      container.style.margin = '20px';
-      container.style.padding = '10px';
-      container.style.border = '1px solid #ccc';
+    // Render dropdown options
+    const betSideSelect = document.getElementById("betSide");
+    betSides.forEach(side => {
+      const option = document.createElement("option");
+      option.value = side;
+      option.textContent = side;
+      betSideSelect.appendChild(option);
+    });
+  </script>
 
-      // 2. Tạo nhãn hiển thị giá trị hiện tại
-      const label = document.createElement('div');
-      label.innerHTML = `Giá trị chọn: <strong>${minRaise}</strong>`;
-      label.style.marginBottom = '10px';
-
-      // 3. Tạo thanh trượt (input range)
-      const slider = document.createElement('input');
-      slider.type = 'range';
-      slider.min = minRaise;
-      slider.max = maxRaise;
-      slider.step = 1000; // "increase" trong yêu cầu của bạn
-      slider.value = minRaise;
-      slider.style.width = '100%';
-
-      // Cập nhật nhãn khi kéo thanh trượt
-      slider.oninput = function() {
-          label.innerHTML = `Giá trị chọn: <strong>${this.value}</strong>`;
-      };
-
-      // 4. Tạo nút Confirm
-      const btn = document.createElement('button');
-      btn.innerText = 'Confirm';
-      btn.style.marginTop = '10px';
-      btn.onclick = function() {
-          user_bet("RAISE", slider.value)
-          // // Gọi hàm raise() và truyền giá trị hiện tại của slider
-          // if (typeof raise === "function") {
-              
-          // } else {
-          //     // Nếu raise chỉ là tên hàm trong scope toàn cục
-          //     window.raise(slider.value);
-          // }
-      };
-
-      // 5. Thêm tất cả vào container và đưa ra body (hoặc một div cụ thể)
-      container.appendChild(label);
-      container.appendChild(slider);
-      container.appendChild(document.createElement('br'));
-      container.appendChild(btn);
-      
-      document.body.appendChild(container);
-  }
-
-  // Giả lập hàm raise để kiểm tra
-  function raise(value) {
-      alert("Đã xác nhận raise: " + value);
-  }
-
-  // Dữ liệu đầu vào của bạn
-  const config = {
-      "maxRaise": 998000,
-      "minRaise": 4000,
-      "raise": 1000 // Đây là bước nhảy (step)
-  };
-
-  // Gọi hàm để tạo giao diện
-  // createRaiseSlider(config);
-  function clearRaiseSlider() {
-      const container = document.getElementById("raise-container");
-      if (container) {
-          container.innerHTML = "";
+  <script>
+    function set_mode(mode) {
+      if (!isSocketConnected()) {
+        return;
       }
-  }
+
+      const input = document.getElementById("diceInput").value.trim();
+      const diceArray = input.split(",").map(num => parseInt(num, 10));
+
+      // Kiểm tra hợp lệ: phải có 3 số từ 1-6
+      if (diceArray.length !== 3 || diceArray.some(n => isNaN(n) || n < 1 || n > 6)) {
+        alert("Vui lòng nhập đúng 3 số từ 1 đến 6, ví dụ: 2,3,5");
+        return;
+      }
+
+      console.log("Dice Result chọn:", diceArray);
+
+      const roomPluginMessage = [
+        5,
+        zoneName,
+        G_ROOM_ID,
+        {
+          "action": "set_mode",
+          "requestId": generateRequestId(),
+          "payload": {
+            "mode": mode,
+            "diceResult": diceArray
+          }
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent : " + JSON.stringify(msg));
+    }
   </script>
 </body>
 </html>

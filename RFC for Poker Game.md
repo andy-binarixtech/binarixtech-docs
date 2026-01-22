@@ -263,7 +263,9 @@ Example
           "minBuyIn": 1000000,
           "groupId": "POKER_1000",
           "smallBlind": 500,
-          "bigBlind": 1000
+          "bigBlind": 1000,
+          "step": 1000,
+          "type": ""
         },
         {
           "minBuyIn": 1000000,
@@ -311,6 +313,9 @@ Example
         "roomInfo": {
             "roomId": 9129,
             "roomName": "room_abc"
+        },
+        "roomType": {
+
         }
     }
 }]
@@ -347,7 +352,8 @@ Example
     "datas": {
         "roomInfo": {
             "roomId": 9129,
-            "roomName": "room_abc"
+            "roomName": "room_abc",
+            "step": 1000
         }
     }
 }]
@@ -421,12 +427,16 @@ Example
           "balance": 1000000,
           "avatarUrl": "no avatar",
           "seatIndex": 1,
-          "name": "user_0vsbf0im"
+          "name": "user_0vsbf0im",
+          "userID": "user_0vsbf0im"
         }
       ],
       "roomInfo": {
         "roomId": 18678,
         "roomName": "Poker_1"
+      }
+      "roomType": {
+        
       }
     },
     "action": "room_data",

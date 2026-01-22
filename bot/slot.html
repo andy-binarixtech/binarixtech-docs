@@ -60,7 +60,6 @@
 
     <button onclick="user_infor()">user infor</button>
     <button onclick="get_room_type()">get room type</button>
-     <button onclick="bet_history()">get bet history</button>
   </div>
 
   <div id="controls" style="padding: 10px;">
@@ -71,8 +70,8 @@
 
   <script>
     let socket;
-    const zoneName = 'SicboZone';
-    const pluginName = 'sicboPlugin';
+    const zoneName = 'Slot1Zone';
+    const pluginName = 'Slot1Plugin';
 
     function logNative(msg) {
       const timestamp = new Date().toISOString();
@@ -119,9 +118,8 @@
 
     function connect() {
       // đổi port nếu server bạn chạy khác
-      const urlPath = "wss://websocket.bigame.vip/ws1";
-      // const urlPath = "ws://127.0.0.1:8893/websocket";
-      // const urlPath = "wss://43.199.112.106:8892/websocket";
+      // const urlPath = "ws://localhost:8892/websocket";
+      const urlPath = "ws://43.199.112.106:8893/websocket";
       socket = new WebSocket(urlPath);
 
       socket.onopen = () => {
@@ -137,8 +135,8 @@
         log("Connection closed");
       };
 
-      socket.onerror = (error) => {
-          console.error("Lỗi WebSocket:", error);
+      socket.onerror = (err) => {
+        log("Error: " + err, "error");
       };
     }
 
@@ -149,9 +147,9 @@
       const loginMessage = [
         1,
         zoneName,
-        "user_andy", 
-        "pw_123", 
-        {}
+        "gamer01", 
+        "", 
+        {action: 'hello'}
       ]
 
       const msg = loginMessage;
@@ -188,12 +186,8 @@
       if (!isSocketConnected()) {
         return;
       }
-      const joinRoomMessage = [
-        3, 
-        zoneName, 
-        123456, 
-        "pwd_123456"
-      ]
+      const joinRoomMessage = [3,zoneName,18314,"EQUWbYMcKPTmvIihzgVhBLvUylpOOJQR"];
+      // const joinRoomMessage = [3,Slot1Zone,8557,XqltwgeYTnFAbFkOzqndOhpErTrYPsxT];
       const msg = joinRoomMessage;
       socket.send(JSON.stringify(msg));
       log("➡️ Sent: " + JSON.stringify(msg));
@@ -220,8 +214,7 @@
         zoneName,
         pluginName,
         {
-          "name": "baymet",
-          "command": "hello"
+          "action": "rooms"
         }
       ];
       socket.send(JSON.stringify(msg));
@@ -293,7 +286,7 @@
       log("Sent : " + JSON.stringify(msg));
     }
 
-    function get_room_type() {
+      function get_room_type() {
       if (!isSocketConnected()) {
         return;
       }
@@ -304,25 +297,6 @@
         {
           "action": "get_room_type",
           "payload": {}
-        }
-      ];
-      socket.send(JSON.stringify(msg));
-      log("Sent : " + JSON.stringify(msg));
-    }
-
-    function bet_history() {
-      if (!isSocketConnected()) {
-        return;
-      }
-      const msg = [
-        6,
-        zoneName,
-        pluginName,
-        {
-          "action": "bet_history",
-          "payload": {
-            "roundId": "3"
-          }
         }
       ];
       socket.send(JSON.stringify(msg));
