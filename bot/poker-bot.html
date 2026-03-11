@@ -201,23 +201,49 @@
   </style>
 </head>
 <body>
+  <script src="js/gcons.js"></script>
+
   <div class="main">
     <h3>POKER BOT</h3>
     <button class="toggle-btn" onclick="toggleButtons()">Actions</button>
     <div class="button-container" id="buttonContainer" style="display: none;">
-      <button onclick="connect()">Connect</button>
-      <button onclick="login()">Login</button>
-      <button onclick="get_room_types()">get room types</button>
-      <button onclick="search_room()">search room</button>
+      
+      <!-- login component -->
+      <div class="login-component">
+        <div style="display: inline-block;">
+          <label>User:</label>
+          <input type="text" value="cody" id="userName" placeholder="Enter user name" />
+        </div>
+        <div style="display: inline-block;">
+          <label>Password:</label>
+          <input type="password" value="123456" id="password" placeholder="Enter password" />
+        </div>
+        <button onclick="connect()">Connect</button>
+        <button onclick="login('LOBBY')">Login</button>
+        <button onclick="login('POKER')">Join Game</button>
+
+        <!-- get_room_type -->
+        <button onclick="get_room_type()">get room type</button>
+        <!-- search room -->
+        <button onclick="search_room()">search room</button>
+      </div>
+
+      <!-- get_game_list -->
+      <button onclick="get_game_list()">get game list</button>
+
       <button onclick="create_room()">create room</button>
       <button onclick="get_rooms()">get rooms</button>
+      <button onclick="is_in_table()">is in table</button>
       <button onclick="room_data()">get rooms</button>
       <button onclick="join_room(G_ROOM_ID)">Join Room</button>
+      <button onclick="leave_room(G_ROOM_ID)">Leave Room</button>
       <button onclick="ping()">PING</button>
       <button onclick="send_msg_to_room()">send msg to room</button>
       <button onclick="user_infor()">user info</button>
+      <button onclick="stand_up()">stand up</button>
 
       <button onclick="deposit()">deposit</button>
+      <button onclick="deposit_in_room()">deposit in room</button>
     </div>
 
     <div id="controls">
@@ -248,11 +274,7 @@
     <div id="table-container"></div>
     <div id="actions-container"></div>
     <div id="raise-container"></div>
-  
-      <!-- <pre id="log"></pre> -->
-      <!-- Nút toggle -->
 
-      
       <div id="log-wrapper">
         <button class="toggle-log-btn" onclick="toggleLog()">Show/Hide Log</button>
         <div id="log" style="display: none;"></div>
@@ -260,15 +282,6 @@
     </div>
   <script>
     let socket;
-    let G_USER_ID
-    let G_GROUP_ID;
-    let G_ROOM_ID;
-    let G_PLAYER_INFOS = [];
-    let G_TABLE_CARDS = [];
-    let G_SELECTED_ROOM;
-    let G_QUICK = false;
-    const zoneName = 'SicboZone';
-    const pluginName = 'pokerGame';
 
     function delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -278,67 +291,9 @@
       connect();
     }
 
-    function logNative(msg) {
-      const timestamp = new Date().toISOString();
-      document.getElementById("log").textContent += timestamp + " : " + msg + "\n";
-    }
-
-    function log(msg, type="default") {
-      const timestamp = new Date().toLocaleString();
-      const logContainer = document.getElementById("log");
-
-      const entry = document.createElement("div");
-      entry.className = "log-entry";
-
-      const timeCol = document.createElement("div");
-      timeCol.className = "log-time";
-      timeCol.textContent = timestamp;
-
-      const actionCol = document.createElement("div");
-      actionCol.className = "log-action";
-
-      const btnFormat = document.createElement("button");
-      btnFormat.textContent = "Toggle JSON";
-      btnFormat.onclick = () => toogleFormatJson(btnFormat);
-
-      const btnCopy = document.createElement("button");
-      btnCopy.textContent = "Copy";
-      btnCopy.onclick = () => copyJsonData(btnCopy);
-
-      const msgCol = document.createElement("div");
-      msgCol.className = "log-msg " + type;
-
-      const icon = document.createElement("span");
-      icon.className = "log-icon";
-
-      // chọn icon theo loại log
-      switch(type) {
-        case "sent": icon.textContent = "📤"; break;
-        case "received": icon.textContent = "📥"; break;
-        case "error": icon.textContent = "⚠️"; break;
-        default: icon.textContent = "ℹ️";
-      }
-
-      const text = document.createElement("span");
-      text.className = 'log-content';
-      text.textContent = msg;
-
-      msgCol.appendChild(icon);
-      msgCol.appendChild(text);
-      actionCol.appendChild(btnFormat);
-      actionCol.appendChild(btnCopy);
-
-      entry.appendChild(timeCol);
-      entry.appendChild(actionCol);
-      entry.appendChild(msgCol);
-      logContainer.appendChild(entry);
-
-      logContainer.scrollTop = logContainer.scrollHeight;
-    }
-
     function connect() {
-      socket = new WebSocket("ws://localhost:8892/websocket");
       // socket = new WebSocket("wss://websocket.bigame.vip/ws1");
+      socket = new WebSocket("ws://localhost:8892/websocket");
 
       socket.onopen = () => {
         log("Connected to server");
@@ -465,8 +420,8 @@
 
       if (action === 'user_exit_room' && eventServer === 'user_exit_room') {
         const datas = dataResponse?.datas;
-        const playerInfo = datas?.playerInfo;
-        removePlayerInfo(G_PLAYER_INFOS, playerInfo?.name);
+        const playerId = datas?.playerId;
+        removePlayerInfo(G_PLAYER_INFOS, playerId);
         if (G_PLAYER_INFOS) {
           showPlayerInfos(G_PLAYER_INFOS);
         }
@@ -480,11 +435,11 @@
         }
       }
 
-      if (action === 'action_infor' && eventServer === 'action_infor') {
+      if (action === 'action_infor') {
         const datas = dataResponse?.datas;
-        const action = datas?.action;
-        if (action) {
-          createActionButtons(action);
+        const userActions = datas?.actions;
+        if (userActions) {
+          createActionButtons(userActions);
           createRaiseSlider(datas);
         }
       }
@@ -519,8 +474,14 @@
     function process_response_1(jsonResponse) {
       const success = jsonResponse[1];
       const userId = jsonResponse[3];
+      const zone = jsonResponse[4];
+      const data = jsonResponse[6];
       if (success) {
         G_USER_ID = userId;
+        if (zone == 'LOBBY') {
+          G_BNR_TOKEN = data?.sessionProfile?.bnrToken;
+          log("> Admin login success: " + userId + ", bnrToken: " + G_BNR_TOKEN);
+        }
         showUserId();
         log("> User login success: " + userId);
         if (G_QUICK) {
@@ -539,54 +500,17 @@
       }
     }
 
-    function login() {
-      if (!isSocketConnected()) {
-        return;
-      }
-      const userId = createUserId();
-      const loginMessage = [
-        1,
-        zoneName,
-        userId,
-        "", 
-        {}
-      ]
-
-      const msg = loginMessage;
-      socket.send(JSON.stringify(msg));
-      log("Login message: " + JSON.stringify(msg));
-    }
-
-    function get_room_types() {
+    function is_in_table() {
       if (!isSocketConnected()) {
         return;
       }
       const zonePluginMessage = [
         6,
-        zoneName,
-        pluginName,
+        G_ZONE_NAME,
+        G_PLUGIN_NAME,
         {
-          "action": "get_room_types",
-          "requestId": "test_123_abc",
-          "payload": {}
-        }
-      ];
-      const msg = zonePluginMessage;
-      socket.send(JSON.stringify(msg));
-      log("Sent: " + JSON.stringify(msg));
-    }
-
-    function user_infor() {
-      if (!isSocketConnected()) {
-        return;
-      }
-      const zonePluginMessage = [
-        6,
-        zoneName,
-        pluginName,
-        {
-          "action": "user_infor",
-          "requestId": "test_123_abc",
+          "action": "is_in_table",
+          "requestId": generateRequestId,
           "payload": {}
         }
       ];
@@ -598,37 +522,13 @@
     function deposit() {
       const zonePluginMessage = [
         6,
-        zoneName,
-        pluginName,
+        G_ZONE_NAME,
+        G_PLUGIN_NAME,
         {
           "action": "deposit",
-          "requestId": "test_123_abc",
+          "requestId": generateRequestId(),
           "payload": {
             "amount": 1000000
-          }
-        }
-      ];
-      const msg = zonePluginMessage;
-      socket.send(JSON.stringify(msg));
-      log("Sent: " + JSON.stringify(msg));
-    }
-
-    function search_room() {
-      if (!G_GROUP_ID) {
-        alert('Select group id, please');
-        return;
-      }
-      if (!isSocketConnected()) {
-        return;
-      }
-      const zonePluginMessage = [
-        6,
-        zoneName,
-        pluginName,
-        {
-          "action": "search_room",
-          "payload": {
-              "groupId": G_GROUP_ID
           }
         }
       ];
@@ -647,8 +547,8 @@
       }
       const zonePluginMessage = [
         6,
-        zoneName,
-        pluginName,
+        G_ZONE_NAME,
+        G_PLUGIN_NAME,
         {
           "action": "create_room",
           "payload": {
@@ -667,8 +567,8 @@
       }
       const zonePluginMessage = [
         6,
-        zoneName,
-        pluginName,
+        G_ZONE_NAME,
+        G_PLUGIN_NAME,
         {
           "action": "get_rooms",
           "payload": {}
@@ -689,9 +589,27 @@
       }
       const joinRoomMessage = [
         3, 
-        zoneName, 
+        G_ZONE_NAME, 
         roomId, 
         ""
+      ]
+      const msg = joinRoomMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
+    function leave_room(roomId) {
+      if (!roomId) {
+        alert('Select room, please');
+        return;
+      }
+      if (!isSocketConnected()) {
+        return;
+      }
+      const joinRoomMessage = [
+        4, 
+        G_ZONE_NAME, 
+        roomId
       ]
       const msg = joinRoomMessage;
       socket.send(JSON.stringify(msg));
@@ -720,12 +638,62 @@
       }
       const roomPluginMessage = [
         5,
-        zoneName,
+        G_ZONE_NAME,
         G_ROOM_ID,
         {
           "action": "send_msg_to_room",
           "payload": {
 
+          }
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
+    function stand_up() {
+      if (!G_ROOM_ID) {
+        alert('Join room, please');
+        return;
+      }
+      if (!isSocketConnected()) {
+        return;
+      }
+      const roomPluginMessage = [
+        5,
+        G_ZONE_NAME,
+        G_ROOM_ID,
+        {
+          "requestId": generateRequestId(),
+          "action": "stand_up",
+          "payload": {
+
+          }
+        }
+      ];
+      const msg = roomPluginMessage;
+      socket.send(JSON.stringify(msg));
+      log("Sent: " + JSON.stringify(msg));
+    }
+
+    function deposit_in_room() {
+      if (!G_ROOM_ID) {
+        alert('Join room, please');
+        return;
+      }
+      if (!isSocketConnected()) {
+        return;
+      }
+      const roomPluginMessage = [
+        5,
+        G_ZONE_NAME,
+        G_ROOM_ID,
+        {
+          "action": "deposit",
+          "requestId": generateRequestId(),
+          "payload": {
+            "amount": 1000000
           }
         }
       ];
@@ -746,7 +714,7 @@
       // raiseValue = (actionId == 'RAISE') ? 2000 : 0;
       const roomPluginMessage = [
         5,
-        zoneName,
+        G_ZONE_NAME,
         G_ROOM_ID,
         {
           "action": "user_bet",
@@ -771,7 +739,7 @@
       }
       const roomPluginMessage = [
         5,
-        zoneName,
+        G_ZONE_NAME,
         G_ROOM_ID,
         {
           "action": "room_data",
@@ -793,7 +761,7 @@
       }
       const roomPluginMessage = [
         5,
-        zoneName,
+        G_ZONE_NAME,
         G_ROOM_ID,
         {
           "action": "user_start_game",
@@ -816,7 +784,7 @@
     }
 
     function showUserId() {
-      document.getElementById('userId').innerHTML = G_USER_ID;
+      document.getElementById('userId').innerHTML = G_USER_ID + " (Token: " + G_BNR_TOKEN + ")";
     }
     function showRoomId() {
       document.getElementById('roomId').innerHTML = G_ROOM_ID;
@@ -1004,8 +972,8 @@
   }
 
   // Remove player theo name
-  function removePlayerInfo(players, name) {
-    const index = players.findIndex(p => p.name === name);
+  function removePlayerInfo(players, playerId) {
+    const index = players.findIndex(p => p.name === playerId);
 
     if (index !== -1) {
       players.splice(index, 1); // xoá phần tử tại index
@@ -1238,7 +1206,6 @@
   };
 
   // Gọi hàm để tạo giao diện
-  // createRaiseSlider(config);
   function clearRaiseSlider() {
       const container = document.getElementById("raise-container");
       if (container) {
@@ -1246,5 +1213,18 @@
       }
   }
   </script>
+
+  <script src="js/index.js"></script>
+  <script src="js/main.js"></script>
+  <!-- utils -->
+  <script src="js/utils/log.js"></script>
+  <script src="js/utils/get_random_user_id.js"></script>
+  <!-- server -->
+  <script src="js/login.js"></script>
+  <!-- game -->
+  <script src="js/games/user_infor.js"></script>
+  <script src="js/games/search_room.js"></script>
+  <script src="js/games/get_room_type.js"></script>
+  <script src="js/games/get_game_list.js"></script>
 </body>
 </html>
