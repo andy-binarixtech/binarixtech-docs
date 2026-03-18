@@ -1,0 +1,43 @@
+# Eclipse build output
+/bin/
+
+# Eclipse project settings
+.settings/
+
+# Eclipse classpath configuration
+.classpath
+
+# Apache Ant build file
+build.xml
+
+# Maven build output
+target/
+
+# IntelliJ IDEA project files
+*.iml
+.idea/
+out/
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Backup and temp files
+*.swp
+*.bak
+*.tmp
+*.~*
+
+# Generated files
+dependency-reduced-pom.xml
