@@ -5,198 +5,240 @@
   <title>SICBO GAME</title>
   <link rel="stylesheet" href="./css/main.css">
 
-  <!-- info -->
+  <!-- Terminal theme -->
   <style>
-    .info {
-      border: 2px solid #6a0dad;
-      margin: 5px;
-      padding: 5px;
-      border-radius: 8px;
-      background-color: #f3e8ff;
-      font-family: Arial, sans-serif;
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0a0a0a, #020202 68%);
+      color: #9cff9c;
+      font-family: "Courier New", Courier, monospace;
     }
 
-    .info title {
-      color: #6a0dad; /* chữ tím */
-      font-weight: bold;
+    * {
+      box-sizing: border-box;
     }
 
-    #groupId {
-      margin-left: 5px;
-      color: #4b0082; /* tím đậm hơn */
+    h3 {
+      margin: 0 0 16px;
+      color: #7cff7c;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
     }
 
-    #group-id-button-container button {
-      background-color: #6a0dad;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      margin: 5px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
+    .main {
+      padding: 18px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    #group-id-button-container button:hover {
-      background-color: #4b0082;
-    }
-  </style>
-
-  <style>
-    #controls button {
-      margin: 5px;
+    label {
+      color: #adffad;
+      margin-right: 6px;
     }
 
-    .action-container {
-      display: flex;
-      gap: 10px;
-      margin: 20px;
+    input,
+    select,
+    button {
+      font-family: inherit;
+      color: #d8ffd8;
+      background: #111;
+      border: 1px solid #2e8f2e;
+      outline: none;
     }
-    .action-button {
+
+    input,
+    select {
+      padding: 8px 10px;
+      border-radius: 4px;
+      min-width: 170px;
+      margin-right: 8px;
+      margin-bottom: 10px;
+    }
+
+    button {
       padding: 8px 14px;
-      border: 1px solid #333;
       border-radius: 4px;
-      background: #f0f0f0;
       cursor: pointer;
-      font-weight: bold;
+      background: #111;
+      transition: background 0.2s ease, transform 0.1s ease;
+      margin-bottom: 10px;
     }
-    .action-button:hover {
-      background: #d0eaff;
-    }
-  </style>
 
-  <style>
-    .room-group {
-      margin-bottom: 15px;
+    button:hover {
+      background: #164216;
+      transform: translateY(-1px);
     }
-    .room-group h3 {
-      margin: 5px 0;
-    }
-    .room-button {
-      margin: 5px;
-      padding: 8px 12px;
-      border: 1px solid #333;
-      border-radius: 4px;
-      background: #f0f0f0;
-      cursor: pointer;
-    }
-    .room-button:hover {
-      background: #d0eaff;
-    }
-  </style>
 
-  <style>
-    .cards-container {
+    .toggle-btn,
+    .toggle-log-btn,
+    .resize-btn {
+      background: #123d12;
+      border-color: #37b337;
+      color: #e3ffe3;
+    }
+
+    .toggle-btn:hover,
+    .toggle-log-btn:hover,
+    .resize-btn:hover {
+      background: #1c7a1c;
+    }
+
+    .button-container {
+      margin-bottom: 18px;
+      padding: 14px;
+      background: rgba(0, 14, 0, 0.92);
+      border: 1px solid #235223;
+      border-radius: 10px;
+      color: #ccffcc;
+    }
+
+    .layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .sidebar {
+      width: min(320px, 30vw);
+      max-height: calc(100vh - 100px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: sticky;
+      top: 20px;
+      align-self: flex-start;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .panel {
+      background: rgba(0, 14, 0, 0.92);
+      border: 1px solid #235223;
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .panel h4 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      color: #7cff7c;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .button-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
-      margin: 20px;
-    }
-    .card-item {
-      border: 1px solid #666;
-      border-radius: 6px;
-      padding: 10px;
-      width: 120px;
-      text-align: center;
-      background: #f9f9f9;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    }
-    .card-sprite {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 6px;
-    }
-    .card-info {
-      font-size: 13px;
-      color: #333;
-    }
-  </style>
-
-  <style>
-    .player-card {
-      height: 200px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 10px;
-      margin: 5px;
-      display: inline-table;
-      text-align: center;
-      background: #f9f9f9;
-    }
-    .player-card img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 10px;
-    }
-    .player-name {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    .player-info {
-      font-size: 14px;
-      color: #333;
-      margin-bottom: 10px;
-    }
-    .player-hand {
-      display: flex;
-      justify-content: center;
       gap: 8px;
     }
-    .card {
-      border: 1px solid #666;
-      border-radius: 4px;
-      padding: 4px;
-      background: #fff;
-      font-size: 12px;
-    }
-  </style>
 
-  <!-- Button Actions -->
-  <style>
-    .button-container {
+    .panel input,
+    .panel select {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .panel button {
+      flex: 1 1 48%;
+      min-width: 110px;
+    }
+
+    .panel .full-width {
+      flex: 1 1 100%;
+    }
+
+    .info {
+      border: 1px solid #3e9b3e;
+      margin: 14px 0;
+      padding: 14px;
+      border-radius: 10px;
+      background-color: rgba(8, 20, 8, 0.9);
+    }
+
+    .info .title {
+      color: #8dff8d;
+      font-weight: 700;
+    }
+
+    .info span {
+      color: #dcffd9;
+    }
+
+    #controls {
+      margin-bottom: 18px;
+    }
+
+    #controls button {
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .action-container,
+    .room-group,
+    .cards-container,
+    .player-card,
+    .card-item {
+      margin-bottom: 18px;
+    }
+
+    .action-button,
+    .room-button {
+      background: #111;
+      border: 1px solid #2f8f2f;
+      color: #ccffcc;
+      margin: 4px;
+    }
+
+    .action-button:hover,
+    .room-button:hover {
+      background: #173b17;
+    }
+
+    .card-item,
+    .player-card {
+      background: rgba(6, 10, 6, 0.95);
+      border: 1px solid #2c7a2c;
+    }
+
+    .player-card img {
+      border: 1px solid #2c7a2c;
+    }
+
+    #log-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    #log {
       display: none;
+      position: relative;
+      width: 100%;
+      min-height: 220px;
+      max-height: 45vh;
+      background-color: #020602;
+      color: #6aff6a;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 14px;
+      overflow-y: auto;
+      border: 1px solid #2ea02e;
+      border-radius: 8px;
+      margin-top: 12px;
     }
 
-    .button-container button {
-      background-color: #6a0dad;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      margin: 5px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s, transform 0.2s;
-    }
-
-    .button-container button:hover {
-      background-color: #4b0082;
-      transform: scale(1.05);
-    }
-
-    .toggle-btn {
-      background-color: #9d61c9;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .toggle-btn:hover {
-      background-color: #4b0082;
-    }
-  </style>
-
-
-  <!-- main -->
-  <style>
-    .main {
-      padding: 5px;
+    .log-line {
+      margin: 2px 0;
     }
   </style>
 </head>
@@ -205,117 +247,113 @@
   
   <div class="main">
     <h3>SICBO BOT</h3>
-    <button class="toggle-btn" onclick="toggleButtons()">Actions</button>
-    <div class="button-container" id="buttonContainer" style="display: none;">
-      <!-- login component -->
-      <div class="login-component">
-        <div style="display: inline-block;">
-          <label>User:</label>
+    <div class="layout">
+      <div class="content">
+        <div class="info panel">
+          <div>
+            <span class="title">User Id:</span>
+            <span id="userId"></span>
+          </div>
+          <div>
+            <span class="title">Room Id:</span>
+            <span id="roomId"></span>
+          </div>
+          <div>
+            <span class="title">Group Id:</span>
+            <span id="groupId"></span>
+            <div id="group-id-button-container"></div>
+          </div>
+        </div>
+
+        <div id="selectedRoomId"></div>
+        <div id="rooms-container"></div>
+        <div id="players-container"></div>
+        <div id="table-container"></div>
+        <div id="actions-container"></div>
+        <div id="raise-container"></div>
+
+        <div id="user-info-panel" class="panel" style="display: none;">
+          <h4>User Info</h4>
+          <div id="user-info-content"></div>
+        </div>
+
+        <div id="log-wrapper" class="panel">
+          <div class="button-row">
+            <button id="clearBtn" class="full-width" onclick="clearLog()">🧹 Clear Log</button>
+          </div>
+          <button class="toggle-log-btn full-width" onclick="toggleLog()">Show/Hide Log</button>
+          <div id="log" style="display: none;"></div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="panel">
+          <h4>Connection</h4>
+          <label>User</label>
           <input type="text" value="cody" id="userName" placeholder="Enter user name" />
-        </div>
-        <div style="display: inline-block;">
-          <label>Password:</label>
+          <label>Password</label>
           <input type="password" value="123456" id="password" placeholder="Enter password" />
+          <label>Token</label>
+          <input type="text" value="" id="token" placeholder="Enter token" />
+          <div class="button-row">
+            <button onclick="connect()">Connect</button>
+            <button onclick="close_connect()">Disconnect</button>
+            <button onclick="login('LOBBY')">Login</button>
+            <button onclick="join_game('SicboZone')">Join Game</button>
+          </div>
         </div>
-        <div style="display: inline-block;">
-          <label>Token:</label>
-          <input type="token" value="" id="token" />
+
+        <div class="panel">
+          <h4>Room / Search</h4>
+          <div class="button-row">
+            <button onclick="get_room_type()">Get room type</button>
+            <button onclick="search_room()">Search room</button>
+          </div>
         </div>
-        
-        <button onclick="connect()">Connect</button>
-        <button onclick="close_connect()">Close Connect</button>
-        <button onclick="login('LOBBY')">Login</button>
-        <button onclick="join_game('SicboZone')">Join Game</button>
 
-        <!-- get_room_type -->
-        <button onclick="get_room_type()">get room type</button>
-        <!-- search room -->
-        <button onclick="search_room()">search room</button>
-      </div>
-
-      <div>
-        <div style="display: inline-block;">
-          <label>User:</label>
-          <input type="text" value="game 1" id="test_action" placeholder="Enter user name" />
+        <div class="panel">
+          <h4>Game Controls</h4>
+          <div class="button-row">
+            <button onclick="deposit()">Deposit</button>
+            <button onclick="get_user_info()">User info</button>
+            <button onclick="get_table_info()">Table info</button>
+            <button onclick="bet_history_for_table()">Table bets</button>
+            <button onclick="bet_history()">Bet history</button>
+            <button onclick="rebet()">Rebet</button>
+            <button onclick="ping()">Ping</button>
+          </div>
         </div>
-        <button onclick="test_action()">test action</button>
-      </div>
 
-      <div>
-        <button onclick="request_to_lobby()">request to lobby</button>
-        <button onclick="request_to_sicbo()">request to sicbo</button>
+        <div class="panel">
+          <h4>Test & Mode</h4>
+          <label for="diceInput">Dice result</label>
+          <input type="text" id="diceInput" placeholder="Nhập 3 số từ 1-6" />
+          <div class="button-row">
+            <button onclick="set_mode('PROD')">Set PROD</button>
+            <button onclick="set_mode('TEST')">Set TEST</button>
+          </div>
+        </div>
 
-        <button onclick="deposit()">deposit</button>
-        <button onclick="get_user_info()">get_user_info</button>
-        <button onclick="get_table_info()">get table info</button>
-        <button onclick="bet_history_for_table()">bet_history_for_table</button>
-        <button onclick="bet_history()">bet history</button>
-        <button onclick="rebet()">rebet</button>
-      </div>
-      <div>
-        <button onclick="ping()">PING</button>
-      </div>
-      <div>
-        <label for="diceInput">Nhập kết quả xúc xắc (ví dụ: 1,2,3):</label>
-        <input type="text" id="diceInput" placeholder="Nhập 3 số từ 1-6" />
-        <button onclick="set_mode('PROD')">set_mode PROD</button>
-        <button onclick="set_mode('TEST')">set_mode TEST</button>
-      </div>  
-    </div>
+        <div class="panel">
+          <h4>Bet Panel</h4>
+          <label for="betSide">Chọn cửa</label>
+          <select id="betSide"></select>
+          <label for="betAmount">Số tiền</label>
+          <input type="number" id="betAmount" value="50000" placeholder="Nhập số tiền" />
+          <div class="button-row">
+            <button onclick="placeBet()">Place Bet</button>
+            <button onclick="placeBets()">Place Bets</button>
+            <button onclick="autoBet()">Auto Bet</button>
+            <button onclick="undo()">Undo</button>
+            <button onclick="cancel()">Cancel</button>
+            <button onclick="double()">Double</button>
+          </div>
+        </div>
 
-    <div id="controls">
-      <button id="clearBtn">🧹 Clear Log</button>
-    </div>
-
-    <div>
-      <!-- chọn side -->
-      <label for="betSide">Chọn cửa:</label>
-      <select id="betSide">
-
-      </select>
-
-      <!-- nhập số tiền -->
-      <label for="betAmount">Số tiền:</label>
-      <input type="number" id="betAmount" value="50000" placeholder="Nhập số tiền" />
-
-      <!-- button -->
-      <button onclick="placeBet()">Place Bet</button>
-      <button onclick="placeBets()">Place Bets</button>
-      <button onclick="autoBet()">Auto Bet</button>
-      <button onclick="undo()">Undo</button>
-      <button onclick="cancel()">Cancel</button>
-      <button onclick="double()">Double</button>
-    </div>
-
-    <div class="info">
-      <di>
-        <span class="title">User Id: </span>
-        <span id='userId'></span>
-      </di>
-      <div>
-        <span class="title">Room Id: </span>
-        <span id='roomId'></span>
-      </div>
-      <div>
-        <span class="title">Group Id: </span>
-        <span id='groupId'></span>
-        <div id="group-id-button-container"></div>
       </div>
     </div>
-
-    <div id="selectedRoomId"></div>
-    <div id="rooms-container"></div>
-    <div id="players-container"></div>
-    <div id="table-container"></div>
-    <div id="actions-container"></div>
-    <div id="raise-container"></div>
+  </div>
   
-      <div id="log-wrapper">
-        <button class="toggle-log-btn" onclick="toggleLog()">Show/Hide Log</button>
-        <div id="log" style="display: none;"></div>
-      </div>
-    </div>
-
   <script>
     function connect() {
       // socket = new WebSocket("wss://websocket.bigame.vip/ws2");
@@ -379,69 +417,12 @@
         }
       }
 
-      if (action === 'room_data') {
-        const datas = dataResponse?.datas;
-        const playerInfos = datas?.playerInfos;
-        G_PLAYER_INFOS = playerInfos;
-        if (G_PLAYER_INFOS) {
-          showPlayerInfos(G_PLAYER_INFOS);
-        }
-      }
-
       if (action === 'user_enter_room') {
         const datas = dataResponse?.datas;
         const playerInfo = datas?.playerInfo;
         updatePlayerInfo(G_PLAYER_INFOS, playerInfo);
         if (G_PLAYER_INFOS) {
           showPlayerInfos(G_PLAYER_INFOS);
-        }
-      }
-
-      if (action === 'place_bind') {
-        const datas = dataResponse?.datas;
-        const playerRoles = datas?.playerRoles;
-        updatePlayerRole(G_PLAYER_INFOS, playerRoles);
-        if (G_PLAYER_INFOS) {
-          showPlayerInfos(G_PLAYER_INFOS);
-        }
-      }
-
-      if (action === 'deal_hole_cards') {
-        const datas = dataResponse?.datas;
-        const playerInfo = datas?.playerInfo;
-        updatePlayerInfo2(G_PLAYER_INFOS, playerInfo);
-        if (G_PLAYER_INFOS) {
-          showPlayerInfos(G_PLAYER_INFOS);
-        }
-      }
-
-      if (action === 'deal_flop') {
-        const datas = dataResponse?.datas;
-        const tableCards = datas?.tableCards;
-        G_TABLE_CARDS = tableCards;
-        console.log(tableCards);
-        if (G_TABLE_CARDS) {
-          showTableCards(G_TABLE_CARDS);
-        }
-      }
-
-        if (action === 'deal_turn') {
-        const datas = dataResponse?.datas;
-        const tableCards = datas?.tableCards;
-        G_TABLE_CARDS = G_TABLE_CARDS.concat(tableCards);
-        console.log(G_TABLE_CARDS);
-        if (G_TABLE_CARDS) {
-          showTableCards(G_TABLE_CARDS);
-        }
-      }
-
-        if (action === 'deal_river') {
-        const datas = dataResponse?.datas;
-        const tableCards = datas?.tableCards;
-        G_TABLE_CARDS = G_TABLE_CARDS.concat(tableCards);
-        console.log(G_TABLE_CARDS);
-        if (G_TABLE_CARDS) {
-          showTableCards(G_TABLE_CARDS);
         }
       }
 
@@ -454,47 +435,11 @@
         }
       }
 
-      if (action === 'get_rooms') {
+      if (action === 'get_user_info') {
         const datas = dataResponse?.datas;
-        const rooms = datas?.rooms;
-        if (rooms) {
-          createRoomButtons(rooms);
+        if (datas) {
+          showUserInfo(datas);
         }
-      }
-
-      if (action === 'action_infor') {
-        const datas = dataResponse?.datas;
-        const action = datas?.action;
-        if (action) {
-          createActionButtons(action);
-          createRaiseSlider(datas);
-        }
-      }
-
-      if (action === 'action_response') {
-        const datas = dataResponse?.datas;
-        const success = datas?.success;
-        updatePlayerInfo3(G_PLAYER_INFOS, datas);
-        if (G_PLAYER_INFOS) {
-          showPlayerInfos(G_PLAYER_INFOS);
-        }
-        clearActionButtons();
-      }
-
-      if (action === 'player_result') {
-        const datas = dataResponse?.datas;
-        const playerResults = datas?.playerResults;
-        updatePlayerResult(G_PLAYER_INFOS, playerResults);
-        if (G_PLAYER_INFOS) {
-          showPlayerInfos(G_PLAYER_INFOS);
-        }
-      }
-
-      if (action === 'end_game') {
-        const datas = dataResponse?.datas;
-        clearTable();
-        clearRaiseSlider();
-        // clearPlayerHand();
       }
     }
 
@@ -543,9 +488,8 @@
         G_PLUGIN_NAME,
         {
           "action": "get_user_info",
-          "requestId": generateRequestId()
-          // ,
-          // "payload": {}
+          "requestId": generateRequestId(),
+          "payload": {}
         }
       ];
       const msg = zonePluginMessage;
@@ -851,6 +795,28 @@
     function showUserId() {
       document.getElementById('userId').innerHTML = G_USER_ID + " " + G_BNR_TOKEN;
     }
+    function formatNumberWithCommas(value) {
+      if (value == null || value === '') return '';
+      const number = Number(value);
+      if (Number.isNaN(number)) return value;
+      return number.toLocaleString('en-US');
+    }
+    function showUserInfo(userInfo) {
+      const panel = document.getElementById('user-info-panel');
+      const content = document.getElementById('user-info-content');
+      if (!userInfo) {
+        panel.style.display = 'none';
+        content.innerHTML = '';
+        return;
+      }
+
+      content.innerHTML = `
+        <div><strong>User:</strong> ${userInfo.userName ?? userInfo.userId ?? ''}</div>
+        <div><strong>User ID:</strong> ${userInfo.userId ?? ''}</div>
+        <div><strong>Balance:</strong> ${formatNumberWithCommas(userInfo.balance)}</div>
+      `;
+      panel.style.display = 'block';
+    }
     function showRoomId() {
       document.getElementById('roomId').innerHTML = G_ROOM_ID;
     }
@@ -1150,6 +1116,13 @@
       const log = document.getElementById("log");
       log.style.display = log.style.display === "none" ? "block" : "none";
     }
+
+    function clearLog() {
+      const log = document.getElementById("log");
+      if (log) {
+        log.innerHTML = "";
+      }
+    }
   </script>
 
   <script>
@@ -1210,65 +1183,6 @@
       const msg = roomPluginMessage;
       socket.send(JSON.stringify(msg));
       log("Sent : " + JSON.stringify(msg));
-    }
-  </script>
-
-  <script>
-    function test_action(zoneName) {
-      const testAction = document.getElementById("test_action").value;
-
-      if (!isSocketConnected()) {
-          return;
-      }
-      const msg = G_ZONE_PLUGIN_MSG;
-      msg[0] = 6;
-      msg[1] = G_ZONE_NAME;
-      msg[2] = G_PLUGIN_NAME;
-      msg[3] = {
-          "action": "test",
-          "requestId": generateRequestId(),
-          "payload": {
-            "test": testAction
-          }
-      };
-      socket.send(JSON.stringify(msg));
-      log(JSON.stringify(msg), "sent");
-    }
-  </script>
-
-  <script>
-    function request_to_lobby() {
-      if (!isSocketConnected()) {
-          return;
-      }
-      const msg = G_ZONE_PLUGIN_MSG;
-      msg[0] = 6;
-      msg[1] = 'LOBBY';
-      msg[2] = 'LOBBY';
-      msg[3] = {
-          "action": "request_to_lobby",
-          "requestId": generateRequestId(),
-          "payload": {}
-      };
-      socket.send(JSON.stringify(msg));
-      log(JSON.stringify(msg), "sent");
-    }
-
-    function request_to_sicbo() {
-      if (!isSocketConnected()) {
-          return;
-      }
-      const msg = G_ZONE_PLUGIN_MSG;
-      msg[0] = 6;
-      msg[1] = '1001';
-      msg[2] = 'sicboPlugin';
-      msg[3] = {
-          "action": "request_to_sicbo",
-          "requestId": generateRequestId(),
-          "payload": {}
-      };
-      socket.send(JSON.stringify(msg));
-      log(JSON.stringify(msg), "sent");
     }
   </script>
 

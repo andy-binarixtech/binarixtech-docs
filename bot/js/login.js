@@ -1,6 +1,7 @@
 function login(zoneName) {
     const userName = document.getElementById("userName").value;
     const password = document.getElementById("password").value;
+    const token = document.getElementById("token").value;
 
     if (!isSocketConnected()) {
         return;
@@ -15,6 +16,9 @@ function login(zoneName) {
     data = {
         bnrToken: ''
     };
+    if (token) {
+        data.bnrToken = token;
+    }
     if (G_BNR_TOKEN) {
         data.bnrToken = G_BNR_TOKEN;
     }

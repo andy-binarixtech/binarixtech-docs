@@ -24,6 +24,10 @@ const G_ZONES = {
         'zoneId': 'SicboZone',
         'pluginId': 'sicboPlugin',
     },
+    '1001': {
+        'zoneId': '1001', // Sicbo
+        'pluginId': 'sicboPlugin',
+    },
 };
 let G_ZONE_NAME = '';
 let G_PLUGIN_NAME = '';

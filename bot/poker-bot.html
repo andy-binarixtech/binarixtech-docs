@@ -228,6 +228,14 @@
         <button onclick="search_room()">search room</button>
       </div>
 
+      <div>
+        <div style="display: inline-block;">
+          <label>User:</label>
+          <input type="text" value="game 1" id="test_action" placeholder="Enter user name" />
+        </div>
+        <button onclick="test_action()">test action</button>
+      </div>
+
       <!-- get_game_list -->
       <button onclick="get_game_list()">get game list</button>
 
@@ -1212,6 +1220,29 @@
           container.innerHTML = "";
       }
   }
+  </script>
+
+  <script>
+    function test_action(zoneName) {
+      const testAction = document.getElementById("test_action").value;
+
+      if (!isSocketConnected()) {
+          return;
+      }
+      const msg = G_ZONE_PLUGIN_MSG;
+      msg[0] = 6;
+      msg[1] = G_ZONE_NAME;
+      msg[2] = G_PLUGIN_NAME;
+      msg[3] = {
+          "action": "test",
+          "requestId": generateRequestId(),
+          "payload": {
+            "testAction": testAction
+          }
+      };
+      socket.send(JSON.stringify(msg));
+      log(JSON.stringify(msg), "sent");
+    }
   </script>
 
   <script src="js/index.js"></script>

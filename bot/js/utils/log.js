@@ -53,5 +53,5 @@ function log(msg, type="default") {
     entry.appendChild(msgCol);
     logContainer.appendChild(entry);
 
-    logContainer.scrollTop = logContainer.scrollHeight;
+    // logContainer.scrollTop = logContainer.scrollHeight;
 }
